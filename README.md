@@ -11,12 +11,12 @@
 </p>
 
 <p align="center">
-  <strong>Scan a folder full of repositories. Generate SBOMs without handholding.</strong>
+  <strong>Scan a folder full of repositories. Generate SBOMs for local workflows and CI/CD pipelines.</strong>
 </p>
 
 SBOMber is an open-source Go CLI for scanning directories of locally cloned Git repositories and generating software bill of materials artifacts at scale.
 
-The first milestone is clear: discover repositories, detect their ecosystems, and generate standards-based SBOMs. After that, the project expands into dependency metadata, outdated package analysis, vulnerability reporting, and supply-chain signals.
+The first milestone is clear: discover repositories, detect their ecosystems, and generate standards-based SBOMs. The tool is being designed for both local developer workflows and automated CI/CD execution. After that, the project expands into dependency metadata, outdated package analysis, vulnerability reporting, and supply-chain signals.
 
 ## What It Is Built For
 
@@ -24,7 +24,24 @@ The first milestone is clear: discover repositories, detect their ecosystems, an
 - detecting repo stacks from manifests and lockfiles
 - generating `CycloneDX` and `SPDX` output
 - handling direct and transitive dependencies
-- fitting into CI, scripts, and local security workflows
+- fitting into CI/CD, scripts, and local security workflows
+
+## CI/CD Targets
+
+SBOMber is intended to run cleanly in non-interactive automation environments such as:
+
+- `GitHub Actions`
+- `GitLab CI/CD`
+- `Jenkins`
+- `Azure DevOps`
+
+That means the CLI should be designed around:
+
+- deterministic exit codes
+- machine-readable output
+- configurable output paths
+- non-interactive flags
+- simple integration into existing pipeline steps
 
 ## Platform Targets
 
@@ -96,6 +113,7 @@ Found 3 repositories under /workspace
 - repository discovery and workspace scanning
 - ecosystem detection from manifests and lockfiles
 - SBOM generation for supported stacks
+- CI/CD-friendly execution and export flows
 - metadata and outdated dependency reporting
 - vulnerability and supply-chain analysis
 
