@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/Xsamsx/SBOMber/internal/deps"
 )
@@ -123,7 +124,7 @@ func saveSPDX(repoDir, repoName string, summary deps.Summary) (string, error) {
 		fmt.Sprintf("DocumentName: %s", repoName),
 		fmt.Sprintf("DocumentNamespace: %s", namespace),
 		"Creator: Tool: SBOMber",
-		fmt.Sprintf("Created: %s", "2026-01-01T00:00:00Z"),
+		fmt.Sprintf("Created: %s", time.Now().UTC().Format(time.RFC3339)),
 	}
 
 	packageIndex := 1
