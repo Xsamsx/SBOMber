@@ -104,6 +104,7 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	if *includeVulnerabilities {
 		if vulnerability.IsGrypeAvailable() {
 			_, _ = fmt.Fprintf(stdout, "Vulnerability scanning: enabled (Grype)\n")
+
 		} else {
 			_, _ = fmt.Fprintf(stderr, "WARNING: Vulnerability scanning requested but Grype not found in PATH\n")
 			_, _ = fmt.Fprintf(stderr, "Install Grype from: https://github.com/anchore/grype\n")
@@ -130,7 +131,7 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(stdout, "- %s  %s  [%s]\n", repo.Name, repo.Path, stack)
 		printDependencySummary(stdout, stderr, repo.Name, repo.Path, detection, selectedFormat, *includeVulnerabilities)
 	}
-
+	_, _ = fmt.Fprintf(stdout, "\nScan complete: %d repositories scanned\n", len(repos))
 	return 0
 }
 
