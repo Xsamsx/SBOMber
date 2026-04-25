@@ -431,7 +431,7 @@ func reportSPDXVulnerabilities(stdout io.Writer, stderr io.Writer, spdxPath stri
 
 	_, _ = fmt.Fprintf(stdout, "    total vulnerabilities found: %d\n", vulnResults.TotalCount)
 	for _, vuln := range vulnResults.Vulnerabilities {
-		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity[:1]) + strings.ToLower(vuln.Severity[1:]), vuln.PackageName, vuln.PackageType)
+		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity[:1])+strings.ToLower(vuln.Severity[1:]), vuln.PackageName, vuln.PackageType)
 	}
 }
 
