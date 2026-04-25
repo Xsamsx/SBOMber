@@ -3,3 +3,9 @@
 bin/
 dist/
 coverage.out
+*.exe
+sbom-cyclonedx.xml
+sbom-cyclonedx.json
+sbom.spdx
+sbom.spdx.json
+sbomber-output/
