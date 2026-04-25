@@ -13,8 +13,11 @@ import (
 	"github.com/Xsamsx/SBOMber/internal/deps"
 	"github.com/Xsamsx/SBOMber/internal/discovery"
 	"github.com/Xsamsx/SBOMber/internal/ecosystem"
+	"github.com/Xsamsx/SBOMber/internal/golang"
+	"github.com/Xsamsx/SBOMber/internal/maven"
 	"github.com/Xsamsx/SBOMber/internal/npm"
 	"github.com/Xsamsx/SBOMber/internal/python"
+	"github.com/Xsamsx/SBOMber/internal/ruby"
 	"github.com/Xsamsx/SBOMber/internal/sbom"
 	"github.com/Xsamsx/SBOMber/internal/vulnerability"
 )
@@ -290,13 +293,18 @@ func printDependencySummary(stdout io.Writer, stderr io.Writer, repoName, repoPa
 		}
 	}
 
-	if !containsEcosystem(detection.Names, ecosystem.NPM) && !containsEcosystem(detection.Names, ecosystem.Python) {
+	totalDirect := summary.Count()
+	totalTransitive := summary.TransitiveCount()
+
+	if totalDirect == 0 && totalTransitive == 0 {
 		return
 	}
 
-	if summary.Count() == 0 {
-		return
+	_, _ = fmt.Fprintf(stdout, "  packages:  %d direct", totalDirect)
+	if totalTransitive > 0 {
+		_, _ = fmt.Fprintf(stdout, ", %d transitive (%d total)", totalTransitive, summary.TotalCount())
 	}
+	_, _ = fmt.Fprintln(stdout)
 
 	sourceLabel := "package.json"
 	if containsEcosystem(detection.Names, ecosystem.Python) {
@@ -380,6 +388,30 @@ func buildRepoDependencySummary(repoPath string, detection ecosystem.Detection) 
 		summary.Direct = append(summary.Direct, pythonSummary.Direct...)
 		summary.Transitive = append(summary.Transitive, pythonSummary.Transitive...)
 	}
+	if containsEcosystem(detection.Names, ecosystem.Maven) {
+		mavenSummary, err := maven.ParsePOM(repoPath)
+		if err != nil {
+			return deps.Summary{}, err
+		}
+		summary.Direct = append(summary.Direct, mavenSummary.Direct...)
+	}
+
+	if containsEcosystem(detection.Names, ecosystem.Ruby) {
+		rubySummary, err := ruby.ParseGemfileLock(repoPath)
+		if err != nil {
+			return deps.Summary{}, err
+		}
+		summary.Direct = append(summary.Direct, rubySummary.Direct...)
+	}
+
+	if containsEcosystem(detection.Names, ecosystem.Go) {
+		goSummary, err := golang.ParseGoMod(repoPath)
+		if err != nil {
+			return deps.Summary{}, err
+		}
+		summary.Direct = append(summary.Direct, goSummary.Direct...)
+		summary.Transitive = append(summary.Transitive, goSummary.Transitive...)
+	}
 
 	return summary, nil
 }
@@ -431,7 +463,7 @@ func reportSPDXVulnerabilities(stdout io.Writer, stderr io.Writer, spdxPath stri
 
 	_, _ = fmt.Fprintf(stdout, "    total vulnerabilities found: %d\n", vulnResults.TotalCount)
 	for _, vuln := range vulnResults.Vulnerabilities {
-		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity[:1]) + strings.ToLower(vuln.Severity[1:]), vuln.PackageName, vuln.PackageType)
+		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity[:1])+strings.ToLower(vuln.Severity[1:]), vuln.PackageName, vuln.PackageType)
 	}
 }
 
