@@ -132,6 +132,28 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 }
 
 func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
+	if stdin == os.Stdin && stdout == os.Stdout {
+		action, scanPath, scanFormat := runTUI()
+		switch action {
+		case "scan":
+			if scanPath == "" {
+				scanPath = "."
+			}
+			if scanFormat == "" {
+				scanFormat = formatCycloneDX
+			}
+			return runScan([]string{"--format", scanFormat, scanPath}, stdout, stderr)
+		case "version":
+			_, _ = fmt.Fprintf(stdout, "sbomber %s\n", version)
+			return 0
+		case "help":
+			printUsage(stdout)
+			return 0
+		default:
+			return 0
+		}
+	}
+
 	printBanner(stdout)
 	_, _ = fmt.Fprintf(stdout, "%sA lightweight CLI for scanning local repositories and generating SBOMs.%s\n\n", colorBlue, colorReset)
 	_, _ = fmt.Fprint(stdout, "Choose an option:\n")
@@ -431,7 +453,7 @@ func reportSPDXVulnerabilities(stdout io.Writer, stderr io.Writer, spdxPath stri
 
 	_, _ = fmt.Fprintf(stdout, "    total vulnerabilities found: %d\n", vulnResults.TotalCount)
 	for _, vuln := range vulnResults.Vulnerabilities {
-		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity[:1]) + strings.ToLower(vuln.Severity[1:]), vuln.PackageName, vuln.PackageType)
+		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity[:1])+strings.ToLower(vuln.Severity[1:]), vuln.PackageName, vuln.PackageType)
 	}
 }
 
