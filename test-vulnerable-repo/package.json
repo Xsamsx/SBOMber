@@ -1,0 +1,16 @@
+{
+  "name": "test-vulnerable-app",
+  "version": "1.0.0",
+  "description": "Test repository with known vulnerable dependencies for SBOMber scanning",
+  "dependencies": {
+    "lodash": "4.17.4",
+    "axios": "0.18.0",
+    "node-fetch": "2.6.0",
+    "serialize-javascript": "1.7.0",
+    "minimist": "0.0.8",
+    "express": "4.16.0"
+  },
+  "devDependencies": {
+    "mocha": "6.0.0"
+  }
+}

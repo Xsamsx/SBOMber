@@ -22,6 +22,12 @@ import (
 const version = "0.1.0"
 
 const (
+	exitSuccess      = 0
+	exitRuntimeError = 1
+	exitConfigError  = 2
+)
+
+const (
 	colorReset = "\033[0m"
 	colorCyan  = "\033[36m"
 	colorBlue  = "\033[34m"
@@ -61,7 +67,7 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	includeVulnerabilities := fs.Bool("include-vulnerabilities", false, "scan for vulnerabilities using Grype")
 
 	if err := fs.Parse(args); err != nil {
-		return 1
+		return exitConfigError
 	}
 
 	root := "."
@@ -72,19 +78,19 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	absoluteRoot, err := resolveScanRoot(root)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "resolve path: %v\n", err)
-		return 1
+		return exitRuntimeError
 	}
 
 	selectedFormat, err := normalizeExportFormat(*format)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "invalid format: %v\n", err)
-		return 1
+		return exitConfigError
 	}
 
 	repos, err := discovery.FindGitRepositories(absoluteRoot)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "scan repositories: %v\n", err)
-		return 1
+		return exitRuntimeError
 	}
 
 	if len(repos) == 0 {
@@ -111,7 +117,7 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 		detection, err := ecosystem.Detect(repo.Path)
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "detect ecosystem for %s: %v\n", repo.Path, err)
-			return 1
+			return exitRuntimeError
 		}
 
 		stack := "unknown"
@@ -128,7 +134,7 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 		printDependencySummary(stdout, stderr, repo.Name, repo.Path, detection, selectedFormat, *includeVulnerabilities)
 	}
 
-	return 0
+	return exitSuccess
 }
 
 func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
@@ -145,7 +151,7 @@ func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
 	choice, err := reader.ReadString('\n')
 	if err != nil && len(choice) == 0 {
 		_, _ = fmt.Fprintf(stderr, "read choice: %v\n", err)
-		return 1
+		return exitRuntimeError
 	}
 
 	switch strings.TrimSpace(choice) {
@@ -172,7 +178,7 @@ func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
 		path, err := reader.ReadString('\n')
 		if err != nil && len(path) == 0 {
 			_, _ = fmt.Fprintf(stderr, "read path: %v\n", err)
-			return 1
+			return exitRuntimeError
 		}
 
 		path = strings.TrimSpace(path)
@@ -205,7 +211,7 @@ func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
 		return 0
 	default:
 		_, _ = fmt.Fprintf(stderr, "invalid choice %q\n", strings.TrimSpace(choice))
-		return 1
+		return exitConfigError
 	}
 }
 
@@ -231,19 +237,19 @@ func promptExportFormat(reader *bufio.Reader, stdout io.Writer, stderr io.Writer
 	choice, err := reader.ReadString('\n')
 	if err != nil && len(choice) == 0 {
 		_, _ = fmt.Fprintf(stderr, "read format choice: %v\n", err)
-		return "", 1
+		return "", exitRuntimeError
 	}
 
 	switch strings.TrimSpace(choice) {
 	case "", "1":
-		return formatCycloneDX, 0
+		return formatCycloneDX, exitSuccess
 	case "2":
-		return formatSPDX, 0
+		return formatSPDX, exitSuccess
 	case "3":
-		return formatBoth, 0
+		return formatBoth, exitSuccess
 	default:
 		_, _ = fmt.Fprintf(stderr, "invalid export format choice %q\n", strings.TrimSpace(choice))
-		return "", 1
+		return "", exitConfigError
 	}
 }
 
@@ -253,18 +259,63 @@ func promptVulnerabilityScan(reader *bufio.Reader, stdout io.Writer, stderr io.W
 	choice, err := reader.ReadString('\n')
 	if err != nil && len(choice) == 0 {
 		_, _ = fmt.Fprintf(stderr, "read vulnerability choice: %v\n", err)
-		return false, 1
+		return false, exitRuntimeError
 	}
 
 	switch strings.ToLower(strings.TrimSpace(choice)) {
 	case "y", "yes":
-		return true, 0
+		return true, exitSuccess
 	case "", "n", "no":
-		return false, 0
+		return false, exitSuccess
 	default:
 		_, _ = fmt.Fprintf(stderr, "invalid vulnerability choice %q\n", strings.TrimSpace(choice))
-		return false, 1
+		return false, exitConfigError
 	}
+}
+
+func printVulnerabilityChart(w io.Writer, results *vulnerability.ScanResults) {
+	severities := []string{"critical", "high", "medium", "low", "negligible"}
+	labels := map[string]string{
+		"critical":   "CRITICAL  ",
+		"high":       "HIGH      ",
+		"medium":     "MEDIUM    ",
+		"low":        "LOW       ",
+		"negligible": "NEGLIGIBLE",
+	}
+
+	counts := results.CountBySeverity()
+	score, scoreLabel := results.RiskScore()
+	kevCount := results.KEVCount()
+	sources := results.DetectedSources()
+
+	maxCount := 0
+	for _, s := range severities {
+		if counts[s] > maxCount {
+			maxCount = counts[s]
+		}
+	}
+
+	if len(sources) > 0 {
+		_, _ = fmt.Fprintf(w, "\n  Data Sources: %s\n", strings.Join(sources, " · "))
+	}
+
+	const barWidth = 20
+	_, _ = fmt.Fprintf(w, "\n  Vulnerability Risk: %s  [Score: %d/100]\n", scoreLabel, score)
+	_, _ = fmt.Fprintf(w, "  ┌────────────────────────────────────────┐\n")
+	for _, sev := range severities {
+		count := counts[sev]
+		filled := 0
+		if maxCount > 0 {
+			filled = count * barWidth / maxCount
+		}
+		bar := strings.Repeat("█", filled) + strings.Repeat("░", barWidth-filled)
+		_, _ = fmt.Fprintf(w, "  │ %s  %s  %-4d│\n", labels[sev], bar, count)
+	}
+	_, _ = fmt.Fprintf(w, "  └────────────────────────────────────────┘\n")
+	if kevCount > 0 {
+		_, _ = fmt.Fprintf(w, "  ⚠  %d actively exploited (CISA KEV)\n", kevCount)
+	}
+	_, _ = fmt.Fprint(w, "\n")
 }
 
 func printDependencySummary(stdout io.Writer, stderr io.Writer, repoName, repoPath string, detection ecosystem.Detection, selectedFormat string, includeVulnerabilities bool) {
@@ -278,15 +329,18 @@ func printDependencySummary(stdout io.Writer, stderr io.Writer, repoName, repoPa
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "save SBOM for %s: %v\n", repoPath, err)
 	} else {
-		var spdxPath string
+		var sbomPath string
 		for _, path := range savedPaths {
 			_, _ = fmt.Fprintf(stdout, "  exported SBOM: %s\n", path)
+			// Prefer SPDX for scanning; fall back to CycloneDX
 			if strings.HasSuffix(path, "sbom.spdx") {
-				spdxPath = path
+				sbomPath = path
+			} else if sbomPath == "" {
+				sbomPath = path
 			}
 		}
-		if spdxPath != "" && includeVulnerabilities {
-			reportSPDXVulnerabilities(stdout, stderr, spdxPath)
+		if sbomPath != "" && includeVulnerabilities {
+			reportSBOMVulnerabilities(stdout, stderr, sbomPath)
 		}
 	}
 
@@ -343,13 +397,6 @@ func printDependencySummary(stdout io.Writer, stderr io.Writer, repoName, repoPa
 	}
 
 	_, _ = fmt.Fprintf(stdout, "  sample packages: %s\n", strings.Join(preview, ", "))
-
-	if includeVulnerabilities {
-		// If SPDX was already generated and reported, skip a second scan.
-		if !strings.HasSuffix(selectedFormat, "spdx") && !strings.HasSuffix(selectedFormat, "both") {
-			scanVulnerabilities(stdout, stderr, repoPath)
-		}
-	}
 }
 
 func buildRepoDependencySummary(repoPath string, detection ecosystem.Detection) (deps.Summary, error) {
@@ -384,55 +431,76 @@ func buildRepoDependencySummary(repoPath string, detection ecosystem.Detection) 
 	return summary, nil
 }
 
-func scanVulnerabilities(stdout io.Writer, stderr io.Writer, repoPath string) {
+func reportSBOMVulnerabilities(stdout io.Writer, stderr io.Writer, sbomPath string) {
 	if !vulnerability.IsGrypeAvailable() {
 		_, _ = fmt.Fprintf(stderr, "  note: grype not available, skipping vulnerability scan\n")
 		return
 	}
 
 	ctx := context.Background()
-	vulnResults, err := vulnerability.ScanWithGrype(ctx, repoPath)
+	vulnResults, err := vulnerability.ScanWithGrype(ctx, "sbom:"+filepath.ToSlash(sbomPath))
 	if err != nil {
-		_, _ = fmt.Fprintf(stderr, "  vulnerability scan failed for %s: %v\n", repoPath, err)
+		_, _ = fmt.Fprintf(stderr, "  vulnerability scan failed for %s: %v\n", sbomPath, err)
 		return
 	}
 
-	if vulnResults.TotalCount == 0 {
-		_, _ = fmt.Fprintf(stdout, "  vulnerabilities found: 0\n")
-		return
+	if kevSet, err := vulnerability.FetchKEVSet(); err != nil {
+		_, _ = fmt.Fprintf(stderr, "  note: CISA KEV unavailable (%v), KEV enrichment skipped\n", err)
+	} else {
+		vulnResults.EnrichWithKEV(kevSet)
 	}
 
-	_, _ = fmt.Fprintf(stdout, "  vulnerabilities found: %d\n", vulnResults.TotalCount)
+	_, _ = fmt.Fprintf(stdout, "  vulnerability findings for %s:\n", filepath.Base(sbomPath))
+	printVulnerabilityChart(stdout, vulnResults)
 
-	counts := vulnResults.CountBySeverity()
-	for severity, count := range counts {
-		_, _ = fmt.Fprintf(stdout, "    - %s: %d\n", severity, count)
+	criticals := vulnResults.Filter("critical")
+	if len(criticals) > 0 {
+		_, _ = fmt.Fprintf(stdout, "  critical vulnerabilities:\n")
+		for _, vuln := range criticals {
+			line := fmt.Sprintf("      - %s  package=%s", vuln.Vulnerability, vuln.PackageName)
+			if vuln.FixedIn != "" {
+				line += fmt.Sprintf("  fix: %s", vuln.FixedIn)
+			}
+			if vuln.InKEV {
+				line += "  [CISA KEV]"
+			}
+			_, _ = fmt.Fprintln(stdout, line)
+		}
+	}
+
+	if os.Getenv("ANTHROPIC_API_KEY") != "" {
+		_, _ = fmt.Fprintf(stdout, "\n  AI Security Analysis (Claude):\n  ")
+		_, _ = fmt.Fprintf(stdout, strings.Repeat("─", 50)+"\n")
+		if err := vulnerability.GenerateAIAnalysis(ctx, vulnResults, &indentWriter{w: stdout, prefix: "  "}); err != nil {
+			_, _ = fmt.Fprintf(stderr, "  note: AI analysis unavailable: %v\n", err)
+		}
+		_, _ = fmt.Fprintln(stdout)
 	}
 }
 
-func reportSPDXVulnerabilities(stdout io.Writer, stderr io.Writer, spdxPath string) {
-	if !vulnerability.IsGrypeAvailable() {
-		_, _ = fmt.Fprintf(stderr, "  note: grype not available, skipping SPDX vulnerability report\n")
-		return
-	}
+// indentWriter prefixes every Write call with a fixed string so AI output is indented.
+type indentWriter struct {
+	w      io.Writer
+	prefix string
+}
 
-	ctx := context.Background()
-	vulnResults, err := vulnerability.ScanWithGrype(ctx, "sbom:"+spdxPath)
-	if err != nil {
-		_, _ = fmt.Fprintf(stderr, "  SPDX vulnerability scan failed for %s: %v\n", spdxPath, err)
-		return
+func (iw *indentWriter) Write(p []byte) (int, error) {
+	lines := strings.Split(string(p), "\n")
+	for i, line := range lines {
+		if i == len(lines)-1 && line == "" {
+			break
+		}
+		var err error
+		if i == 0 {
+			_, err = fmt.Fprint(iw.w, line)
+		} else {
+			_, err = fmt.Fprintf(iw.w, "\n%s%s", iw.prefix, line)
+		}
+		if err != nil {
+			return 0, err
+		}
 	}
-
-	_, _ = fmt.Fprintf(stdout, "  SPDX vulnerability findings for %s:\n", filepath.Base(spdxPath))
-	if vulnResults.TotalCount == 0 {
-		_, _ = fmt.Fprintf(stdout, "    no vulnerabilities found\n")
-		return
-	}
-
-	_, _ = fmt.Fprintf(stdout, "    total vulnerabilities found: %d\n", vulnResults.TotalCount)
-	for _, vuln := range vulnResults.Vulnerabilities {
-		_, _ = fmt.Fprintf(stdout, "      - %s [%s] package=%s type=%s\n", vuln.Vulnerability, strings.ToUpper(vuln.Severity), vuln.PackageName, vuln.PackageType)
-	}
+	return len(p), nil
 }
 
 func containsEcosystem(names []ecosystem.Name, candidate ecosystem.Name) bool {
@@ -446,6 +514,8 @@ func containsEcosystem(names []ecosystem.Name, candidate ecosystem.Name) bool {
 }
 
 func resolveScanRoot(root string) (string, error) {
+	root = strings.TrimSpace(root)
+	root = strings.Trim(root, `"'`)
 	root = strings.TrimSpace(root)
 	if root == "" {
 		root = "."

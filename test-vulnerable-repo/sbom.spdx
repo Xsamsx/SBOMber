@@ -1,0 +1,127 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: test-vulnerable-repo
+DocumentNamespace: http://spdx.org/spdxdocs/test-vulnerable-repo-sbom
+Creator: Tool: SBOMber
+Created: 2026-05-02T17:10:55Z
+PackageName: axios
+SPDXID: SPDXRef-Package-1
+PackageVersion: 0.18.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-1
+PackageName: express
+SPDXID: SPDXRef-Package-2
+PackageVersion: 4.16.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-2
+PackageName: lodash
+SPDXID: SPDXRef-Package-3
+PackageVersion: 4.17.4
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-3
+PackageName: minimist
+SPDXID: SPDXRef-Package-4
+PackageVersion: 0.0.8
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-4
+PackageName: node-fetch
+SPDXID: SPDXRef-Package-5
+PackageVersion: 2.6.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-5
+PackageName: serialize-javascript
+SPDXID: SPDXRef-Package-6
+PackageVersion: 1.7.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-6
+PackageName: mocha
+SPDXID: SPDXRef-Package-7
+PackageVersion: 6.0.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-7
+PackageName: Pillow
+SPDXID: SPDXRef-Package-8
+PackageVersion: ==8.2.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-8
+PackageName: PyYAML
+SPDXID: SPDXRef-Package-9
+PackageVersion: ==5.3.1
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-9
+PackageName: cryptography
+SPDXID: SPDXRef-Package-10
+PackageVersion: ==3.3.1
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-10
+PackageName: requests
+SPDXID: SPDXRef-Package-11
+PackageVersion: ==2.25.0
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-11
+PackageName: urllib3
+SPDXID: SPDXRef-Package-12
+PackageVersion: ==1.26.4
+PackageSupplier: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NONE
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-12
