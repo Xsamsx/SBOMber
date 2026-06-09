@@ -253,9 +253,9 @@ func Compare(groundTruth, generated []Component) *ComparisonResult {
 
 	// Calculate metrics
 	if result.GeneratedCount > 0 {
-		// Precision: correct / total reported
-		correctCount := result.MatchedCount
-		result.Precision = float64(correctCount) / float64(result.GeneratedCount) * 100
+		// Precision: exact name+version matches / total reported (extras count in denominator)
+		exactMatches := result.MatchedCount - result.VersionMismatch
+		result.Precision = float64(exactMatches) / float64(result.GeneratedCount) * 100
 	}
 
 	if result.GroundTruthCount > 0 {
@@ -326,7 +326,7 @@ func (r *ComparisonResult) PrintReport() string {
 	sb.WriteString("┌─────────────────────────────────────────────────────────────┐\n")
 	sb.WriteString("│ ACCURACY METRICS                                            │\n")
 	sb.WriteString("├─────────────────────────────────────────────────────────────┤\n")
-	sb.WriteString(fmt.Sprintf("│ Precision:        %5.1f%%  (correct / total reported)       │\n", r.Precision))
+	sb.WriteString(fmt.Sprintf("│ Precision:        %5.1f%%  (exact matches / total reported)  │\n", r.Precision))
 	sb.WriteString(fmt.Sprintf("│ Recall:           %5.1f%%  (found / total in ground truth)  │\n", r.Recall))
 	sb.WriteString(fmt.Sprintf("│ F1 Score:         %5.1f%%  (harmonic mean)                  │\n", r.F1Score))
 	sb.WriteString(fmt.Sprintf("│ Version Accuracy: %5.1f%%  (exact version matches)          │\n", r.VersionAccuracy))

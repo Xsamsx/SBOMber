@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/Xsamsx/SBOMber/internal/deps"
+	"github.com/Xsamsx/SBOMber/internal/npm"
 )
 
 func parseManifestContent(path string, content []byte) (deps.Summary, error) {
@@ -17,7 +18,9 @@ func parseManifestContent(path string, content []byte) (deps.Summary, error) {
 	case "package.json":
 		return parsePackageJSON(content)
 	case "package-lock.json":
-		return parsePackageLockJSON(content)
+		return npm.ParsePackageLockContent(content, "package-lock.json")
+	case "yarn.lock":
+		return parseYarnLock(content)
 	case "requirements.txt":
 		return parseRequirementsTxt(content)
 	case "go.mod":
@@ -69,65 +72,8 @@ func parsePackageJSON(content []byte) (deps.Summary, error) {
 	return summary, nil
 }
 
-type packageLockJSON struct {
-	Packages map[string]struct {
-		Version string `json:"version"`
-		Dev     bool   `json:"dev"`
-	} `json:"packages"`
-	Dependencies map[string]struct {
-		Version string `json:"version"`
-		Dev     bool   `json:"dev"`
-	} `json:"dependencies"`
-}
-
-func parsePackageLockJSON(content []byte) (deps.Summary, error) {
-	var lock packageLockJSON
-	if err := json.Unmarshal(content, &lock); err != nil {
-		return deps.Summary{}, err
-	}
-
-	summary := deps.Summary{
-		Transitive: make([]deps.Dependency, 0),
-	}
-
-	if len(lock.Packages) > 0 {
-		for path, pkg := range lock.Packages {
-			if path == "" {
-				continue
-			}
-			name := strings.TrimPrefix(path, "node_modules/")
-			if strings.Contains(name, "node_modules/") {
-				continue
-			}
-
-			scope := deps.ScopeRuntime
-			if pkg.Dev {
-				scope = deps.ScopeDev
-			}
-
-			summary.Transitive = append(summary.Transitive, deps.Dependency{
-				Name:      name,
-				Version:   pkg.Version,
-				Scope:     scope,
-				Ecosystem: "npm",
-			})
-		}
-	} else if len(lock.Dependencies) > 0 {
-		for name, dep := range lock.Dependencies {
-			scope := deps.ScopeRuntime
-			if dep.Dev {
-				scope = deps.ScopeDev
-			}
-			summary.Transitive = append(summary.Transitive, deps.Dependency{
-				Name:      name,
-				Version:   dep.Version,
-				Scope:     scope,
-				Ecosystem: "npm",
-			})
-		}
-	}
-
-	return summary, nil
+func parseYarnLock(content []byte) (deps.Summary, error) {
+	return npm.ParseYarnLockContent(content, "yarn.lock")
 }
 
 func parseRequirementsTxt(content []byte) (deps.Summary, error) {
@@ -182,7 +128,8 @@ var goModRequire = regexp.MustCompile(`^\s*([^\s]+)\s+([^\s]+)`)
 
 func parseGoMod(content []byte) (deps.Summary, error) {
 	summary := deps.Summary{
-		Direct: make([]deps.Dependency, 0),
+		Direct:     make([]deps.Dependency, 0),
+		Transitive: make([]deps.Dependency, 0),
 	}
 
 	lines := strings.Split(string(content), "\n")
@@ -206,18 +153,25 @@ func parseGoMod(content []byte) (deps.Summary, error) {
 			continue
 		}
 
-		if strings.Contains(line, "// indirect") {
-			continue
+		isIndirect := strings.Contains(line, "// indirect")
+		if idx := strings.Index(line, "//"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
 		}
 
 		matches := goModRequire.FindStringSubmatch(line)
 		if len(matches) >= 3 {
-			summary.Direct = append(summary.Direct, deps.Dependency{
+			dep := deps.Dependency{
 				Name:      matches[1],
 				Version:   matches[2],
 				Scope:     deps.ScopeRuntime,
-				Ecosystem: "go",
-			})
+				Ecosystem: "golang",
+			}
+			if isIndirect {
+				summary.Transitive = append(summary.Transitive, dep)
+			} else {
+				dep.IsDirect = true
+				summary.Direct = append(summary.Direct, dep)
+			}
 		}
 	}
 

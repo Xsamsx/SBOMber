@@ -68,15 +68,24 @@ type cycloneDXProperty struct {
 
 // SaveSBOM writes one or more SBOM files for the repository.
 // Returns the list of saved file paths and the output directory path.
-// Output is stored in ~/.sbomber/reports/<project-name>/
+// Output is stored in ~/.sbomber/reports/<project-name>/ unless outputDir is provided.
 func SaveSBOM(repoDir, repoName string, summary deps.Summary, format string) ([]string, string, error) {
+	return SaveSBOMWithOutput(repoDir, repoName, summary, format, "")
+}
+
+// SaveSBOMWithOutput writes SBOM files to outputDir when non-empty, otherwise the default location.
+func SaveSBOMWithOutput(repoDir, repoName string, summary deps.Summary, format, outputDir string) ([]string, string, error) {
 	saved := make([]string, 0, 2)
 	if format == "" {
 		return saved, "", nil
 	}
 
-	// Get central output directory
-	outputDir, err := GetOutputDir(repoDir)
+	var err error
+	if outputDir == "" {
+		outputDir, err = GetOutputDir(repoDir)
+	} else if err = os.MkdirAll(outputDir, 0o755); err != nil {
+		return nil, "", fmt.Errorf("create output directory: %w", err)
+	}
 	if err != nil {
 		return nil, "", err
 	}

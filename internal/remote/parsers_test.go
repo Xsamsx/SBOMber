@@ -105,6 +105,10 @@ require github.com/single/dep v1.0.0
 		t.Errorf("expected 3 direct dependencies, got %d", len(summary.Direct))
 	}
 
+	if len(summary.Transitive) != 1 {
+		t.Errorf("expected 1 transitive dependency, got %d", len(summary.Transitive))
+	}
+
 	found := make(map[string]deps.Dependency)
 	for _, dep := range summary.Direct {
 		found[dep.Name] = dep
@@ -114,10 +118,23 @@ require github.com/single/dep v1.0.0
 		t.Error("missing gin dependency")
 	} else if dep.Version != "v1.9.1" {
 		t.Errorf("gin version = %s, want v1.9.1", dep.Version)
+	} else if dep.Ecosystem != "golang" {
+		t.Errorf("gin ecosystem = %s, want golang", dep.Ecosystem)
 	}
 
 	if _, ok := found["golang.org/x/text"]; ok {
-		t.Error("indirect dependency should be excluded")
+		t.Error("indirect dependency should not be listed as direct")
+	}
+
+	transitive := make(map[string]deps.Dependency)
+	for _, dep := range summary.Transitive {
+		transitive[dep.Name] = dep
+	}
+
+	if dep, ok := transitive["golang.org/x/text"]; !ok {
+		t.Error("missing indirect golang.org/x/text dependency")
+	} else if dep.Version != "v0.14.0" {
+		t.Errorf("text version = %s, want v0.14.0", dep.Version)
 	}
 }
 

@@ -2,6 +2,7 @@ package npm
 
 import (
 	"bufio"
+	"bytes"
 	"os"
 	"path/filepath"
 	"sort"
@@ -22,15 +23,33 @@ type yarnEntry struct {
 // dependency information to an existing npm summary.
 func EnrichFromYarnLock(root string, summary deps.Summary) (deps.Summary, error) {
 	path := filepath.Join(root, "yarn.lock")
-	file, err := os.Open(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return summary, err
 	}
-	defer func() { _ = file.Close() }()
 
-	entries, err := parseYarnLock(file)
+	return EnrichSummaryFromYarnLock(content, path, summary)
+}
+
+// ParseYarnLockContent parses a Yarn lockfile from memory. When no direct
+// dependencies are supplied, every resolved package is recorded as transitive.
+func ParseYarnLockContent(content []byte, sourceFile string) (deps.Summary, error) {
+	return EnrichSummaryFromYarnLock(content, sourceFile, deps.Summary{
+		Direct:     make([]deps.Dependency, 0),
+		Transitive: make([]deps.Dependency, 0),
+	})
+}
+
+// EnrichSummaryFromYarnLock classifies yarn.lock entries against known direct deps.
+func EnrichSummaryFromYarnLock(content []byte, sourceLocation string, summary deps.Summary) (deps.Summary, error) {
+	entries, err := parseYarnLock(bytes.NewReader(content))
 	if err != nil {
 		return summary, err
+	}
+
+	sourceFile := filepath.Base(sourceLocation)
+	if sourceFile == "" {
+		sourceFile = "yarn.lock"
 	}
 
 	directSelectors := make(map[string]struct{}, len(summary.Direct)*2)
@@ -43,18 +62,8 @@ func EnrichFromYarnLock(root string, summary deps.Summary) (deps.Summary, error)
 
 	directLocked := make(map[string]struct{})
 	transitive := make(map[string]deps.Dependency)
-	entryByName := make(map[string]*yarnEntry) // for looking up dependencies
 
-	// First pass: identify all entries
-	for i := range entries {
-		entry := &entries[i]
-		if entry.Name == "" || entry.Version == "" {
-			continue
-		}
-		entryByName[entry.Name] = entry
-	}
-
-	// Second pass: classify as direct or transitive
+	// Classify lockfile entries as direct or transitive.
 	for i := range entries {
 		entry := &entries[i]
 		if entry.Name == "" || entry.Version == "" {
@@ -87,11 +96,11 @@ func EnrichFromYarnLock(root string, summary deps.Summary) (deps.Summary, error)
 		transitive[key] = deps.Dependency{
 			Name:           entry.Name,
 			Version:        entry.Version,
-			Scope:          deps.Scope("transitive"),
+			Scope:          deps.ScopeRuntime,
 			Ecosystem:      "npm",
 			Children:       entry.Dependencies,
-			SourceFile:     "yarn.lock",
-			SourceLocation: path,
+			SourceFile:     sourceFile,
+			SourceLocation: sourceLocation,
 		}
 	}
 
@@ -109,8 +118,8 @@ func EnrichFromYarnLock(root string, summary deps.Summary) (deps.Summary, error)
 	return summary, nil
 }
 
-func parseYarnLock(file *os.File) ([]yarnEntry, error) {
-	scanner := bufio.NewScanner(file)
+func parseYarnLock(r *bufio.Reader) ([]yarnEntry, error) {
+	scanner := bufio.NewScanner(r)
 	scanner.Buffer(make([]byte, 0, 64*1024), 4*1024*1024)
 
 	entries := make([]yarnEntry, 0)

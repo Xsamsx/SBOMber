@@ -77,6 +77,32 @@ func GetBatchOutputDir(scanName string) (string, error) {
 	return batchDir, nil
 }
 
+// ResolveOutputDir returns the output directory for a scan.
+// When customOutput is empty, the default ~/.sbomber/reports/<project> path is used.
+func ResolveOutputDir(customOutput, projectPath string) (string, error) {
+	if strings.TrimSpace(customOutput) == "" {
+		return GetOutputDir(projectPath)
+	}
+
+	absPath, err := filepath.Abs(customOutput)
+	if err != nil {
+		return "", fmt.Errorf("resolve output path: %w", err)
+	}
+	if err := os.MkdirAll(absPath, 0o755); err != nil {
+		return "", fmt.Errorf("create output directory: %w", err)
+	}
+	return absPath, nil
+}
+
+// ResolveBatchOutputDir returns the directory for multi-repo scans.
+// When customOutput is set it is used directly; otherwise a timestamped batch dir is created.
+func ResolveBatchOutputDir(customOutput, scanName string) (string, error) {
+	if strings.TrimSpace(customOutput) == "" {
+		return GetBatchOutputDir(scanName)
+	}
+	return ResolveOutputDir(customOutput, scanName)
+}
+
 // GetRepoOutputDir creates a subdirectory for a specific repo within a batch scan.
 func GetRepoOutputDir(batchDir, repoName string) (string, error) {
 	safeName := regexp.MustCompile(`[^a-zA-Z0-9_-]`).ReplaceAllString(repoName, "_")

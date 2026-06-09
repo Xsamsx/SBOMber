@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"sync"
@@ -164,7 +165,7 @@ func (r *Resolver) resolveRepoURL(dep deps.Dependency) (string, error) {
 		return r.resolveNpmRepo(dep.Name)
 	case "pypi":
 		return r.resolvePyPIRepo(dep.Name)
-	case "go":
+	case "go", "golang":
 		return r.resolveGoRepo(dep.Name)
 	case "rubygems":
 		return r.resolveRubyRepo(dep.Name)
@@ -305,7 +306,94 @@ func (r *Resolver) resolveRubyRepo(name string) (string, error) {
 }
 
 func (r *Resolver) resolveMavenRepo(name string) (string, error) {
-	return "", fmt.Errorf("maven repo resolution not implemented")
+	groupID, artifactID, ok := strings.Cut(name, ":")
+	if !ok || groupID == "" || artifactID == "" {
+		return "", fmt.Errorf("invalid maven coordinate: %s", name)
+	}
+
+	version, err := r.lookupMavenLatestVersion(groupID, artifactID)
+	if err != nil {
+		return "", err
+	}
+
+	pomURL := mavenPOMURL(groupID, artifactID, version)
+	resp, err := r.httpClient.Get(pomURL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("maven central returned %d for %s", resp.StatusCode, pomURL)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	if repoURL := extractGitHubURLFromPOM(string(body)); repoURL != "" {
+		return repoURL, nil
+	}
+
+	return "", fmt.Errorf("no GitHub repository found in POM")
+}
+
+type mavenSearchResponse struct {
+	Response struct {
+		Docs []struct {
+			LatestVersion string `json:"latestVersion"`
+		} `json:"docs"`
+	} `json:"response"`
+}
+
+func (r *Resolver) lookupMavenLatestVersion(groupID, artifactID string) (string, error) {
+	query := url.QueryEscape(fmt.Sprintf(`g:"%s" AND a:"%s"`, groupID, artifactID))
+	searchURL := fmt.Sprintf("https://search.maven.org/solrsearch/select?q=%s&rows=1&wt=json", query)
+
+	resp, err := r.httpClient.Get(searchURL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("maven search returned %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var search mavenSearchResponse
+	if err := json.Unmarshal(body, &search); err != nil {
+		return "", err
+	}
+	if len(search.Response.Docs) == 0 || search.Response.Docs[0].LatestVersion == "" {
+		return "", fmt.Errorf("artifact not found on Maven Central")
+	}
+
+	return search.Response.Docs[0].LatestVersion, nil
+}
+
+func mavenPOMURL(groupID, artifactID, version string) string {
+	groupPath := strings.ReplaceAll(groupID, ".", "/")
+	return fmt.Sprintf("https://repo1.maven.org/maven2/%s/%s/%s/%s-%s.pom", groupPath, artifactID, version, artifactID, version)
+}
+
+var pomGitHubPatterns = []*regexp.Regexp{
+	regexp.MustCompile(`(?i)<scm>\s*<url>\s*(https?://github\.com/[^<]+)\s*</url>`),
+	regexp.MustCompile(`(?i)<url>\s*(https?://github\.com/[^<]+)\s*</url>`),
+}
+
+func extractGitHubURLFromPOM(content string) string {
+	for _, pattern := range pomGitHubPatterns {
+		if matches := pattern.FindStringSubmatch(content); len(matches) >= 2 {
+			return normalizeGitURL(strings.TrimSpace(matches[1]))
+		}
+	}
+	return ""
 }
 
 var gitURLPattern = regexp.MustCompile(`github\.com[:/]([^/]+)/([^/\.]+)`)

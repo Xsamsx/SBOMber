@@ -160,6 +160,7 @@ func (s *Scanner) ScanRepo(repoURL string) (*ScanResult, error) {
 	}
 
 	result.Summary.Direct = deduplicateDeps(result.Summary.Direct)
+	result.Summary.Transitive = deduplicateDeps(result.Summary.Transitive)
 	s.log(fmt.Sprintf("Total: %d direct, %d transitive dependencies", len(result.Summary.Direct), len(result.Summary.Transitive)))
 
 	return result, nil
