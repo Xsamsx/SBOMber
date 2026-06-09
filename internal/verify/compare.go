@@ -218,6 +218,19 @@ func componentKey(component Component) string {
 	return normalizeKey(component.Name) + "@" + normalizeVersion(component.Version)
 }
 
+func findComponentByName(components map[string]Component, skip map[string]struct{}, name string) (Component, bool) {
+	target := normalizeKey(name)
+	for key, component := range components {
+		if _, used := skip[key]; used {
+			continue
+		}
+		if normalizeKey(component.Name) == target {
+			return component, true
+		}
+	}
+	return Component{}, false
+}
+
 // Compare compares generated SBOM against ground truth
 func Compare(groundTruth, generated []Component) *ComparisonResult {
 	groundTruth = dedupeComponents(groundTruth)
@@ -232,49 +245,65 @@ func Compare(groundTruth, generated []Component) *ComparisonResult {
 		Mismatch:         make([]VersionMismatch, 0),
 	}
 
-	// Build lookup maps
-	truthMap := make(map[string]Component)
-	for _, c := range groundTruth {
-		key := normalizeKey(c.Name)
-		truthMap[key] = c
+	truthByKey := make(map[string]Component, len(groundTruth))
+	for _, component := range groundTruth {
+		truthByKey[componentKey(component)] = component
 	}
 
-	genMap := make(map[string]Component)
-	for _, c := range generated {
-		key := normalizeKey(c.Name)
-		genMap[key] = c
+	genByKey := make(map[string]Component, len(generated))
+	for _, component := range generated {
+		genByKey[componentKey(component)] = component
 	}
 
-	// Find matches and mismatches
-	for key, truth := range truthMap {
-		if gen, found := genMap[key]; found {
-			if normalizeVersion(truth.Version) == normalizeVersion(gen.Version) {
-				result.Matched = append(result.Matched, ComponentMatch{
-					Name:    truth.Name,
-					Version: truth.Version,
-				})
-				result.MatchedCount++
-			} else {
-				result.Mismatch = append(result.Mismatch, VersionMismatch{
-					Name:            truth.Name,
-					ExpectedVersion: truth.Version,
-					ActualVersion:   gen.Version,
-				})
-				result.VersionMismatch++
-				result.MatchedCount++ // Still counts as found for recall
-			}
-		} else {
-			result.Missing = append(result.Missing, truth)
-			result.MissingCount++
+	matchedTruthKeys := make(map[string]struct{})
+	matchedGenKeys := make(map[string]struct{})
+
+	for key, truth := range truthByKey {
+		if _, found := genByKey[key]; !found {
+			continue
 		}
+		result.Matched = append(result.Matched, ComponentMatch{
+			Name:    truth.Name,
+			Version: truth.Version,
+		})
+		result.MatchedCount++
+		matchedTruthKeys[key] = struct{}{}
+		matchedGenKeys[key] = struct{}{}
 	}
 
-	// Find extras (in generated but not in ground truth)
-	for key, gen := range genMap {
-		if _, found := truthMap[key]; !found {
-			result.Extra = append(result.Extra, gen)
-			result.ExtraCount++
+	for key, truth := range truthByKey {
+		if _, matched := matchedTruthKeys[key]; matched {
+			continue
 		}
+		gen, found := findComponentByName(genByKey, matchedGenKeys, truth.Name)
+		if !found {
+			continue
+		}
+		result.Mismatch = append(result.Mismatch, VersionMismatch{
+			Name:            truth.Name,
+			ExpectedVersion: truth.Version,
+			ActualVersion:   gen.Version,
+		})
+		result.VersionMismatch++
+		result.MatchedCount++
+		matchedTruthKeys[key] = struct{}{}
+		matchedGenKeys[componentKey(gen)] = struct{}{}
+	}
+
+	for key, truth := range truthByKey {
+		if _, matched := matchedTruthKeys[key]; matched {
+			continue
+		}
+		result.Missing = append(result.Missing, truth)
+		result.MissingCount++
+	}
+
+	for key, gen := range genByKey {
+		if _, matched := matchedGenKeys[key]; matched {
+			continue
+		}
+		result.Extra = append(result.Extra, gen)
+		result.ExtraCount++
 	}
 
 	// Calculate metrics

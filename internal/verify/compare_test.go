@@ -26,6 +26,42 @@ func TestComparePrecisionExcludesVersionMismatches(t *testing.T) {
 	}
 }
 
+func TestCompareSelfCompareNpmCleanStyleVersions(t *testing.T) {
+	// Mirrors npm-clean SBOM: direct dep keeps range, lockfile resolves exact version.
+	components := []Component{
+		{Name: "is-number", Version: "^7.0.0"},
+		{Name: "is-number", Version: "7.0.0"},
+	}
+
+	result := Compare(components, components)
+
+	if result.Precision != 100 {
+		t.Fatalf("expected precision 100, got %f", result.Precision)
+	}
+	if result.Recall != 100 {
+		t.Fatalf("expected recall 100, got %f", result.Recall)
+	}
+	if result.MatchedCount != 2 {
+		t.Fatalf("expected 2 matched components, got %d", result.MatchedCount)
+	}
+}
+
+func TestCompareSelfCompareWithSameNameDifferentVersions(t *testing.T) {
+	components := []Component{
+		{Name: "is-number", Version: "7.0.0"},
+		{Name: "is-number", Version: "7.0.1"},
+	}
+
+	result := Compare(components, components)
+
+	if result.Precision != 100 {
+		t.Fatalf("expected precision 100, got %f", result.Precision)
+	}
+	if result.Recall != 100 {
+		t.Fatalf("expected recall 100, got %f", result.Recall)
+	}
+}
+
 func TestCompareSelfCompareWithDuplicateRows(t *testing.T) {
 	components := []Component{
 		{Name: "is-number", Version: "7.0.0"},
