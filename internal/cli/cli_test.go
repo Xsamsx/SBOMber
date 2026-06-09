@@ -84,8 +84,13 @@ func TestInteractiveScanCurrentFolder(t *testing.T) {
 
 	root := t.TempDir()
 	repo := filepath.Join(root, "demo")
+
 	mustMkdirAll(t, filepath.Join(repo, ".git"))
-	mustWriteFile(t, filepath.Join(repo, "package.json"))
+	mustWriteFile(t, filepath.Join(repo, "package.json"), `{
+  "dependencies": {
+    "left-pad": "1.0.0"
+  }
+}`)
 
 	previousWD, err := os.Getwd()
 	if err != nil {
