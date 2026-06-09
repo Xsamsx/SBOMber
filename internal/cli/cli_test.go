@@ -18,13 +18,8 @@ func TestScanReportsDetectedEcosystems(t *testing.T) {
 
 	mustMkdirAll(t, filepath.Join(goRepo, ".git"))
 	mustMkdirAll(t, filepath.Join(npmRepo, ".git"))
-
-	mustWriteFile(t, filepath.Join(goRepo, "go.mod"), `module example.com/alpha
-
-go 1.22
-`)
+	mustWriteFile(t, filepath.Join(goRepo, "go.mod"))
 	mustWriteFile(t, filepath.Join(goRepo, "go.sum"))
-
 	mustWriteFile(t, filepath.Join(npmRepo, "package.json"), `{
   "dependencies": {
     "react": "^19.0.0"
@@ -33,8 +28,10 @@ go 1.22
     "vitest": "^1.0.0"
   }
 }`)
+	mustWriteFile(t, filepath.Join(npmRepo, "yarn.lock"), `__metadata:
+  version: 8
 
-	mustWriteFile(t, filepath.Join(npmRepo, "yarn.lock"), `"react@npm:^19.0.0":
+"react@npm:^19.0.0":
   version: 19.1.0
   resolution: "react@npm:19.1.0"
   dependencies:
@@ -53,7 +50,7 @@ go 1.22
 "vite@npm:^5.0.0":
   version: 5.4.0
   resolution: "vite@npm:5.4.0"
-`)
+}`)
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
@@ -84,7 +81,6 @@ func TestInteractiveScanCurrentFolder(t *testing.T) {
 
 	root := t.TempDir()
 	repo := filepath.Join(root, "demo")
-
 	mustMkdirAll(t, filepath.Join(repo, ".git"))
 	mustWriteFile(t, filepath.Join(repo, "package.json"), `{
   "dependencies": {
@@ -179,5 +175,3 @@ func mustWriteFile(t *testing.T, path string, parts ...string) {
 		t.Fatalf("write %s: %v", path, err)
 	}
 }
-
-

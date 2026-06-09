@@ -195,8 +195,34 @@ func parseSPDXJSON(data []byte) ([]Component, error) {
 	return components, nil
 }
 
+// dedupeComponents removes duplicate name+version rows from an SBOM component list.
+func dedupeComponents(components []Component) []Component {
+	if len(components) == 0 {
+		return components
+	}
+
+	seen := make(map[string]struct{}, len(components))
+	deduped := make([]Component, 0, len(components))
+	for _, component := range components {
+		key := componentKey(component)
+		if _, exists := seen[key]; exists {
+			continue
+		}
+		seen[key] = struct{}{}
+		deduped = append(deduped, component)
+	}
+	return deduped
+}
+
+func componentKey(component Component) string {
+	return normalizeKey(component.Name) + "@" + normalizeVersion(component.Version)
+}
+
 // Compare compares generated SBOM against ground truth
 func Compare(groundTruth, generated []Component) *ComparisonResult {
+	groundTruth = dedupeComponents(groundTruth)
+	generated = dedupeComponents(generated)
+
 	result := &ComparisonResult{
 		GroundTruthCount: len(groundTruth),
 		GeneratedCount:   len(generated),

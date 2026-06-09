@@ -79,6 +79,7 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	outputDir := fs.String("output", "", "custom output directory for SBOMs and reports")
 	severityThreshold := fs.String("severity-threshold", "", "only report/fail on vulnerabilities at or above this severity (critical, high, medium, low)")
 
+	args = reorderFlagsFirst(args, scanBoolFlags)
 	if err := fs.Parse(args); err != nil {
 		return 1
 	}
@@ -248,6 +249,7 @@ func runGitHubScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	outputDirFlag := fs.String("output", "", "custom output directory for SBOMs and reports")
 	severityThreshold := fs.String("severity-threshold", "", "only report/fail on vulnerabilities at or above this severity (critical, high, medium, low)")
 
+	args = reorderFlagsFirst(args, githubBoolFlags)
 	if err := fs.Parse(args); err != nil {
 		return 1
 	}

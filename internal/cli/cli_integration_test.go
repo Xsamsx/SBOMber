@@ -151,6 +151,29 @@ func TestScanInvalidSeverityThreshold(t *testing.T) {
 	}
 }
 
+func TestScanFlagsAfterPath(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	repo := filepath.Join(root, "flags-after-path")
+	outDir := filepath.Join(root, "custom-out")
+	mustMkdirAll(t, filepath.Join(repo, ".git"))
+	mustWriteFile(t, filepath.Join(repo, "package.json"), `{"dependencies":{"ms":"2.1.3"}}`)
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	exitCode := Main([]string{"scan", repo, "--output", outDir}, strings.NewReader(""), &stdout, &stderr)
+	if exitCode != 0 {
+		t.Fatalf("expected exit code 0, got %d, stderr=%q", exitCode, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), outDir) {
+		t.Fatalf("expected custom output dir in stdout, got %q", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(outDir, "sbom-cyclonedx.xml")); err != nil {
+		t.Fatalf("expected SBOM in custom output dir: %v", err)
+	}
+}
+
 func TestScanCustomOutputDir(t *testing.T) {
 	t.Parallel()
 

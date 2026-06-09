@@ -26,6 +26,25 @@ func TestComparePrecisionExcludesVersionMismatches(t *testing.T) {
 	}
 }
 
+func TestCompareSelfCompareWithDuplicateRows(t *testing.T) {
+	components := []Component{
+		{Name: "is-number", Version: "7.0.0"},
+		{Name: "is-number", Version: "7.0.0"},
+	}
+
+	result := Compare(components, components)
+
+	if result.Precision != 100 {
+		t.Fatalf("expected precision 100, got %f", result.Precision)
+	}
+	if result.Recall != 100 {
+		t.Fatalf("expected recall 100, got %f", result.Recall)
+	}
+	if result.F1Score != 100 {
+		t.Fatalf("expected f1 100, got %f", result.F1Score)
+	}
+}
+
 func TestComparePrecisionIncludesExtrasInDenominator(t *testing.T) {
 	groundTruth := []Component{
 		{Name: "express", Version: "4.18.2"},
