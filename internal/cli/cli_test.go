@@ -28,8 +28,12 @@ func TestScanReportsDetectedEcosystems(t *testing.T) {
     "vitest": "^1.0.0"
   }
 }`)
-	mustWriteFile(t, filepath.Join(npmRepo, "yarn.lock"), `__metadata:
-  version: 8
+	
+	mustWriteFile(t, filepath.Join(repo, "package.json"), `{
+  "dependencies": {
+    "left-pad": "1.0.0"
+  }
+}`)
 
 "react@npm:^19.0.0":
   version: 19.1.0
@@ -171,3 +175,5 @@ func mustWriteFile(t *testing.T, path string, parts ...string) {
 		t.Fatalf("write %s: %v", path, err)
 	}
 }
+
+
