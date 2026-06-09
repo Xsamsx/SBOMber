@@ -42,7 +42,7 @@ func ParseYarnLockContent(content []byte, sourceFile string) (deps.Summary, erro
 
 // EnrichSummaryFromYarnLock classifies yarn.lock entries against known direct deps.
 func EnrichSummaryFromYarnLock(content []byte, sourceLocation string, summary deps.Summary) (deps.Summary, error) {
-	entries, err := parseYarnLock(bytes.NewReader(content))
+	entries, err := parseYarnLock(bufio.NewReader(bytes.NewReader(content)))
 	if err != nil {
 		return summary, err
 	}
