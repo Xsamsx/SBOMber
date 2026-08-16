@@ -137,25 +137,24 @@ Understand how dependencies enter your project.
 
 ### SBOM Verification
 
-Compare your generated SBOM against a ground truth to measure accuracy.
+Compare your generated SBOM against a committed ground truth to measure accuracy.
+
+> The repository includes a verified benchmark fixture at `testdata/benchmarks/npm-basic/ground-truth.json`. Accuracy figures are only meaningful when the reference SBOM is committed and verified in-repo.
 
 ```bash
-# Compare against a reference SBOM
-./bin/sbomber verify reference.cdx.xml my-output.cdx.xml
+# Compare against a committed reference SBOM
+./bin/sbomber verify testdata/benchmarks/npm-basic/ground-truth.json testdata/benchmarks/npm-basic/generated.json
 
 # Output as JSON (for CI/CD)
-./bin/sbomber verify reference.json generated.json --json
+./bin/sbomber verify testdata/benchmarks/npm-basic/ground-truth.json testdata/benchmarks/npm-basic/generated.json --json
 ```
 
-**Output:**
+**Verified benchmark result for the committed fixture:**
 ```
-╔══════════════════════════════════════════════════════════════╗
-║                    SBOM VERIFICATION REPORT                  ║
-╚══════════════════════════════════════════════════════════════╝
-
-│ Precision:        98.0%  (correct / total reported)          │
-│ Recall:           96.7%  (found / total in ground truth)     │
-│ F1 Score:         97.3%  (harmonic mean)                     │
+Precision:        100.0%
+Recall:           100.0%
+F1 Score:         100.0%
+Version Accuracy: 100.0%
 
 Overall Grade: A+ (Excellent)
 ```
