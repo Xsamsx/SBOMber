@@ -585,7 +585,7 @@ for target in "linux amd64" "linux arm64" "darwin amd64" "darwin arm64" "windows
   done
 done
 
-ls -lh /tmp/h-<id>-* 
+ls -lh /tmp/h-<id>-*
 ldd /tmp/h-<id>-linux-amd64-cgo1 2>/dev/null || echo "static"
 ```
 
