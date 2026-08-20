@@ -1,0 +1,39 @@
+Candidate B preliminary API and dependency inspection
+
+Candidate:
+github.com/odvcencio/gotreesitter v0.51.0
+
+Environment:
+Ubuntu 26.04 LTS, Linux amd64, Go 1.26.0, VMware VM
+
+Required grammar functions:
+- grammars.JavascriptLanguage()
+- grammars.TypescriptLanguage()
+- grammars.TsxLanguage()
+
+Required parser API:
+- gotreesitter.NewParser(lang)
+- Parser.Parse(source)
+- Parser.ParseStrict(source)
+- Parser.SetTimeoutMicros(timeout)
+
+Required location and traversal API:
+- Node.StartByte()
+- Node.EndByte()
+- Node.StartPoint()
+- Node.EndPoint()
+- Node.Child()
+- Node.NamedChild()
+- tree cursor support
+
+Query API:
+- gotreesitter.NewQuery()
+
+CGO inspection:
+- grammar package CgoFiles list is empty
+- CGO_ENABLED=0 dependency inspection produced no CGO packages
+
+Conclusion:
+Candidate B is eligible to proceed to formal T1 language-instantiation
+testing. This is not yet a T1 pass because no formal corpus fixture has
+been parsed.

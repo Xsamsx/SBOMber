@@ -1,0 +1,621 @@
+===== GRAMMARS =====
+package grammars // import "github.com/odvcencio/gotreesitter/grammars"
+
+c_sharp precise ExternalLexStates — DEFAULT since the 2026-07 cliff campaign
+(previously staged behind -tags csharp_precise_els).
+
+The embedded c_sharp grammar blob preserves LexModes[state].ExternalLexState
+(histogram matches C exactly: 10 distinct states) but shipped an EMPTY
+ExternalLexStates validity table (ts2go dropped it). With the table empty,
+dfaTokenSource (parser_dfa_token_source.go) cannot use its precise per-state
+external path and instead unions externalValidMaskByState across all
+active GLR stacks. Under multi-stack pressure that union over-approximates
+external-token validity and corrupts the STATEFUL interpolated-string scanner
+(grammars/csharp_scanner.go): at an interpolation hole's close it reported
+external-lex-state 2 (expression start) instead of 5 (string content),
+the scanner's interpolation stack never popped (measured: 27 pushes, 0 pops),
+and pass-1 on DeclaredTypeManager.cs died no_stacks_alive at byte 31888 behind a
+~1,000-pass retry cascade.
+
+The table below is copied VERBATIM from tree-sitter-c-sharp src/parser.c
+(ts_external_scanner_states[10][12], pinned commit in languages.lock).
+Registering it (a) restores the precise per-state external path, and (b)
+satisfies the C-recovery election gate (DiagnoseCRecoveryGate), so c_sharp runs
+the faithful C error-recovery cost competition by default.
+
+The two engine blockers that kept this staged were fixed in the same campaign:
+  - parser_recover_c.go cCondenseAndResume: the C MAX_VERSION_COUNT window now
+    bounds DISTINCT merge keys (C merges same-key versions via ts_stack_merge
+    before its cap; the old raw positional trim dropped whole grammar
+    interpretations).
+  - parser.go usesPrimaryExternalScannerStateForGLR: the c_sharp
+    primary-stack-only pin now applies only while ExternalLexStates is empty;
+    with the precise table the scored per-row path sees all stack states,
+    so interpolation-hole stacks receive interpolation_close_brace.
+
+Validation: grammars/csharp_external_lex_states_regression_test.go.
+
+Verbatim ts_external_scanner_states[10][8] from the pinned
+tree-sitter-javascript parser.c. Ordinary scanner arbitration needs these
+rows to distinguish ASI-valid states from expression-continuation states;
+action-table fallback is broader and can reverse ASI/comment ordering.
+
+WHY PRECISE ELS IS DEFAULT BUT C RECOVERY IS NOT (2026-07 cliff campaign
+measurement) Unlike c_sharp — whose stateful interpolation scanner was actively
+corrupted by the union-mask fallback, so the precise table + election fixed
+real misparses (DeclaredTypeManager.cs 31 ERROR nodes -> 0) — javascript's worst
+perf_scan sweep files parse with ZERO error nodes either way, so the table has
+nothing to fix there today, and ELECTION is a measured regression on that slice
+(loaded-box interleaved A/B, elected vs GOT_C_RECOVERY=0, live engine with both
+campaign engine fixes):
+
+    deps/undici/undici.js               2.2-2.4s -> ~5.1s   (accepted both)
+    deps/v8/.../unicode-test.js         ~370ms   -> ~600ms  (median of 4+4)
+    deps/v8/.../box2d.js                memory_budget @49543 either way
+    deps/v8/.../lua_binarytrees.js      memory_budget @6745 either way
+    deps/amaro/dist/index.js            ~100-135ms either way
+
+The elected path's per-token cost (cRecoveryEnabled lexing via NextWithErrorRuns
++ acquire-token bookkeeping) is paid on CLEAN parses, and javascript's actual
+sweep cliffs (asm.js megafunctions dying on memory_budget) are unrelated to
+external-scanner validity. JavaScript is therefore explicitly opted out of
+default C-recovery election even though precise scanner validity is now always
+enabled. Re-enable recovery only after the memory-budget cliff is fixed and a
+sweep shows it at worst neutral.
+
+Columns are the JavaScript external token indices, in the language's
+ExternalSymbols order (== C enum order):
+
+    0 _automatic_semicolon  4 ||
+    1 _template_chars       5 escape_sequence
+    2 _ternary_qmark        6 regex_pattern
+    3 html_comment          7 jsx_text
+
+Source: https://github.com/tree-sitter/tree-sitter-javascript
+58404d8cf191d69f2674a8fd507bd5776f46cb11 src/parser.c
+
+Package grammars provides built-in and extension tree-sitter grammars with lazy
+loading. Most built-in grammars are currently shipped as compressed ts2go blobs,
+while extension grammars can come from grammargen-generated loaders. Use
+AllLanguages to enumerate available grammars, DetectLanguage to match by file
+extension or shebang, or call individual language functions (e.g. GoLanguage())
+for direct access.
+
+var ParseSmokeSamples = map[string]string{ ... }
+func AdaLanguage() *gotreesitter.Language
+func AdaptScannerForLanguage(name string, targetLang *gotreesitter.Language) bool
+func AgdaLanguage() *gotreesitter.Language
+func AngularLanguage() *gotreesitter.Language
+func ApexLanguage() *gotreesitter.Language
+func ArduinoLanguage() *gotreesitter.Language
+func AsmLanguage() *gotreesitter.Language
+func AstroLanguage() *gotreesitter.Language
+func AttachLanguageSupport(name string, lang *gotreesitter.Language) bool
+func AuthzedLanguage() *gotreesitter.Language
+func AwkLanguage() *gotreesitter.Language
+func BashLanguage() *gotreesitter.Language
+func BassLanguage() *gotreesitter.Language
+func BeancountLanguage() *gotreesitter.Language
+func BibtexLanguage() *gotreesitter.Language
+func BicepLanguage() *gotreesitter.Language
+func BitbakeLanguage() *gotreesitter.Language
+func BladeLanguage() *gotreesitter.Language
+func BlobByName(name string) []byte
+func BrightscriptLanguage() *gotreesitter.Language
+func CLanguage() *gotreesitter.Language
+func CSharpLanguage() *gotreesitter.Language
+func CaddyLanguage() *gotreesitter.Language
+func CairoLanguage() *gotreesitter.Language
+func CapnpLanguage() *gotreesitter.Language
+func ChatitoLanguage() *gotreesitter.Language
+func CircomLanguage() *gotreesitter.Language
+func ClojureLanguage() *gotreesitter.Language
+func CmakeLanguage() *gotreesitter.Language
+func CobolLanguage() *gotreesitter.Language
+func CommentLanguage() *gotreesitter.Language
+func CommonlispLanguage() *gotreesitter.Language
+func CooklangLanguage() *gotreesitter.Language
+func Core100LanguageNames() []string
+func CornLanguage() *gotreesitter.Language
+func CponLanguage() *gotreesitter.Language
+func CppLanguage() *gotreesitter.Language
+func CrystalLanguage() *gotreesitter.Language
+func CssLanguage() *gotreesitter.Language
+func CsvLanguage() *gotreesitter.Language
+func CudaLanguage() *gotreesitter.Language
+func CueLanguage() *gotreesitter.Language
+func CylcLanguage() *gotreesitter.Language
+func DLanguage() *gotreesitter.Language
+func DartLanguage() *gotreesitter.Language
+func DesktopLanguage() *gotreesitter.Language
+func DevicetreeLanguage() *gotreesitter.Language
+func DhallLanguage() *gotreesitter.Language
+func DiffLanguage() *gotreesitter.Language
+func DisassemblyLanguage() *gotreesitter.Language
+func DisplayName(entry *LangEntry) string
+func DjotLanguage() *gotreesitter.Language
+func DockerfileLanguage() *gotreesitter.Language
+func DotLanguage() *gotreesitter.Language
+func DoxygenLanguage() *gotreesitter.Language
+func DtdLanguage() *gotreesitter.Language
+func EarthfileLanguage() *gotreesitter.Language
+func EbnfLanguage() *gotreesitter.Language
+func EditorconfigLanguage() *gotreesitter.Language
+func EdsLanguage() *gotreesitter.Language
+func EexLanguage() *gotreesitter.Language
+func ElispLanguage() *gotreesitter.Language
+func ElixirLanguage() *gotreesitter.Language
+func ElmLanguage() *gotreesitter.Language
+func ElsaLanguage() *gotreesitter.Language
+func EmbeddedLanguageCacheStats() (loaded int, limit int)
+func EmbeddedLanguageIdleConfig() (ttl time.Duration, sweepInterval time.Duration)
+func EmbeddedTemplateLanguage() *gotreesitter.Language
+func EnforceLanguage() *gotreesitter.Language
+func ErlangLanguage() *gotreesitter.Language
+func FacilityLanguage() *gotreesitter.Language
+func FaustLanguage() *gotreesitter.Language
+func FennelLanguage() *gotreesitter.Language
+func FidlLanguage() *gotreesitter.Language
+func FirrtlLanguage() *gotreesitter.Language
+func FishLanguage() *gotreesitter.Language
+func FoamLanguage() *gotreesitter.Language
+func ForthLanguage() *gotreesitter.Language
+func FortranLanguage() *gotreesitter.Language
+func FsharpLanguage() *gotreesitter.Language
+func GdscriptLanguage() *gotreesitter.Language
+func GitConfigLanguage() *gotreesitter.Language
+func GitRebaseLanguage() *gotreesitter.Language
+func GitattributesLanguage() *gotreesitter.Language
+func GitcommitLanguage() *gotreesitter.Language
+func GitignoreLanguage() *gotreesitter.Language
+func GleamLanguage() *gotreesitter.Language
+func GlslLanguage() *gotreesitter.Language
+func GnLanguage() *gotreesitter.Language
+func GoLanguage() *gotreesitter.Language
+func GodotResourceLanguage() *gotreesitter.Language
+func GomodLanguage() *gotreesitter.Language
+func GrammarOwnershipFor(name string) (GrammarOwnership, bool)
+func GraphqlLanguage() *gotreesitter.Language
+func GroovyLanguage() *gotreesitter.Language
+func HackLanguage() *gotreesitter.Language
+func HareLanguage() *gotreesitter.Language
+func HaskellLanguage() *gotreesitter.Language
+func HaxeLanguage() *gotreesitter.Language
+func HclLanguage() *gotreesitter.Language
+func HeexLanguage() *gotreesitter.Language
+func HlslLanguage() *gotreesitter.Language
+func HtmlLanguage() *gotreesitter.Language
+func HttpLanguage() *gotreesitter.Language
+func HurlLanguage() *gotreesitter.Language
+func HyprlangLanguage() *gotreesitter.Language
+func IniLanguage() *gotreesitter.Language
+func JanetLanguage() *gotreesitter.Language
+func JavaLanguage() *gotreesitter.Language
+func JavascriptLanguage() *gotreesitter.Language
+func Jinja2Language() *gotreesitter.Language
+func JqLanguage() *gotreesitter.Language
+func JsdocLanguage() *gotreesitter.Language
+func Json5Language() *gotreesitter.Language
+func JsonLanguage() *gotreesitter.Language
+func JsonnetLanguage() *gotreesitter.Language
+func JuliaLanguage() *gotreesitter.Language
+func JustLanguage() *gotreesitter.Language
+func KconfigLanguage() *gotreesitter.Language
+func KdlLanguage() *gotreesitter.Language
+func KotlinLanguage() *gotreesitter.Language
+func LedgerLanguage() *gotreesitter.Language
+func LessLanguage() *gotreesitter.Language
+func LinkerscriptLanguage() *gotreesitter.Language
+func LiquidLanguage() *gotreesitter.Language
+func LlvmLanguage() *gotreesitter.Language
+func LoadLanguage(name string, data []byte) (*gotreesitter.Language, error)
+func LookupExternalLexStates(name string) [][]bool
+func LookupExternalScanner(name string) gotreesitter.ExternalScanner
+func LookupExternalScannerSpec(name string) (ExternalScannerSpec, bool)
+func LuaLanguage() *gotreesitter.Language
+func LuauLanguage() *gotreesitter.Language
+func MakeLanguage() *gotreesitter.Language
+func MarkdownInlineLanguage() *gotreesitter.Language
+func MarkdownLanguage() *gotreesitter.Language
+func MatlabLanguage() *gotreesitter.Language
+func MermaidLanguage() *gotreesitter.Language
+func MesonLanguage() *gotreesitter.Language
+func MojoLanguage() *gotreesitter.Language
+func MoveLanguage() *gotreesitter.Language
+func NewAuthzedTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewCTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewGenericTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewGoTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewHTMLTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewJSONTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewJavaTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewLuaTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NewTomlTokenSourceOrEOF(src []byte, lang *gotreesitter.Language) gotreesitter.TokenSource
+func NginxLanguage() *gotreesitter.Language
+func NickelLanguage() *gotreesitter.Language
+func NimLanguage() *gotreesitter.Language
+func NinjaLanguage() *gotreesitter.Language
+func NixLanguage() *gotreesitter.Language
+func NorgLanguage() *gotreesitter.Language
+func NushellLanguage() *gotreesitter.Language
+func ObjcLanguage() *gotreesitter.Language
+func OcamlLanguage() *gotreesitter.Language
+func OdinLanguage() *gotreesitter.Language
+func OrgLanguage() *gotreesitter.Language
+func OutlineOwnerRules(entry LangEntry) []gotreesitter.OutlineOwnerRule
+func ParseFile(filename string, source []byte) (*gotreesitter.BoundTree, error)
+func ParseFilePooled(filename string, source []byte) (*gotreesitter.BoundTree, error)
+func ParseFilePooledStrict(filename string, source []byte) (*gotreesitter.BoundTree, error)
+func ParseSmokeSample(name string) string
+func ParseSupportFor(name string) (ParseSupport, bool)
+func PascalLanguage() *gotreesitter.Language
+func PemLanguage() *gotreesitter.Language
+func PerlLanguage() *gotreesitter.Language
+func PhpLanguage() *gotreesitter.Language
+func PklLanguage() *gotreesitter.Language
+func PowershellLanguage() *gotreesitter.Language
+func PrismaLanguage() *gotreesitter.Language
+func PrologLanguage() *gotreesitter.Language
+func PromqlLanguage() *gotreesitter.Language
+func PropertiesLanguage() *gotreesitter.Language
+func ProtoLanguage() *gotreesitter.Language
+func PugLanguage() *gotreesitter.Language
+func PuppetLanguage() *gotreesitter.Language
+func PurescriptLanguage() *gotreesitter.Language
+func PurgeEmbeddedLanguageCache() int
+func PythonLanguage() *gotreesitter.Language
+func QlLanguage() *gotreesitter.Language
+func RLanguage() *gotreesitter.Language
+func RacketLanguage() *gotreesitter.Language
+func RegexLanguage() *gotreesitter.Language
+func Register(entry LangEntry)
+func RegisterExtension(ext ExtensionEntry)
+func RegisterExternalLexStates(name string, states [][]bool)
+func RegisterExternalScanner(name string, s gotreesitter.ExternalScanner)
+func RegisterExternalScannerSpec(spec ExternalScannerSpec)
+func RegoLanguage() *gotreesitter.Language
+func RequirementsLanguage() *gotreesitter.Language
+func RescriptLanguage() *gotreesitter.Language
+func ResolveTagsQuery(entry LangEntry) string
+func RobotLanguage() *gotreesitter.Language
+func RonLanguage() *gotreesitter.Language
+func RstLanguage() *gotreesitter.Language
+func RubyLanguage() *gotreesitter.Language
+func RustLanguage() *gotreesitter.Language
+func ScalaLanguage() *gotreesitter.Language
+func SchemeLanguage() *gotreesitter.Language
+func ScssLanguage() *gotreesitter.Language
+func SetEmbeddedLanguageCacheLimit(limit int)
+func SetEmbeddedLanguageIdleSweepInterval(interval time.Duration)
+func SetEmbeddedLanguageIdleTTL(ttl time.Duration)
+func SmithyLanguage() *gotreesitter.Language
+func SolidityLanguage() *gotreesitter.Language
+func SparqlLanguage() *gotreesitter.Language
+func SqlLanguage() *gotreesitter.Language
+func SquirrelLanguage() *gotreesitter.Language
+func SshConfigLanguage() *gotreesitter.Language
+func StarlarkLanguage() *gotreesitter.Language
+func SvelteLanguage() *gotreesitter.Language
+func SwiftLanguage() *gotreesitter.Language
+func TablegenLanguage() *gotreesitter.Language
+func TclLanguage() *gotreesitter.Language
+func TealLanguage() *gotreesitter.Language
+func TemplLanguage() *gotreesitter.Language
+func TextprotoLanguage() *gotreesitter.Language
+func ThriftLanguage() *gotreesitter.Language
+func TlaplusLanguage() *gotreesitter.Language
+func TmuxLanguage() *gotreesitter.Language
+func TodotxtLanguage() *gotreesitter.Language
+func TomlLanguage() *gotreesitter.Language
+func TsxLanguage() *gotreesitter.Language
+func TurtleLanguage() *gotreesitter.Language
+func TwigLanguage() *gotreesitter.Language
+func TypescriptLanguage() *gotreesitter.Language
+func TypstLanguage() *gotreesitter.Language
+func UnloadEmbeddedLanguage(blobName string) bool
+func UxntalLanguage() *gotreesitter.Language
+func VLanguage() *gotreesitter.Language
+func VerilogLanguage() *gotreesitter.Language
+func VhdlLanguage() *gotreesitter.Language
+func VimdocLanguage() *gotreesitter.Language
+func VueLanguage() *gotreesitter.Language
+func WalkAndParse(ctx context.Context, root string, policy ParsePolicy) (<-chan ParsedFile, func() WalkStats)
+func WatLanguage() *gotreesitter.Language
+func WgslLanguage() *gotreesitter.Language
+func WolframLanguage() *gotreesitter.Language
+func XmlLanguage() *gotreesitter.Language
+func YamlLanguage() *gotreesitter.Language
+func YuckLanguage() *gotreesitter.Language
+func ZigLanguage() *gotreesitter.Language
+type AgdaExternalScanner struct{}
+type AngularExternalScanner struct{}
+type ArduinoExternalScanner struct{}
+type AstroExternalScanner struct{}
+type AuthzedTokenSource struct{ ... }
+    func NewAuthzedTokenSource(src []byte, lang *gotreesitter.Language) (*AuthzedTokenSource, error)
+type AwkExternalScanner struct{}
+type BashExternalScanner struct{}
+type BeancountExternalScanner struct{}
+type BicepExternalScanner struct{}
+type BitbakeExternalScanner struct{}
+type BladeExternalScanner struct{}
+type CSharpExternalScanner struct{}
+type CTokenSource struct{ ... }
+    func NewCTokenSource(src []byte, lang *gotreesitter.Language) (*CTokenSource, error)
+type CaddyExternalScanner struct{}
+type CairoExternalScanner struct{}
+type CmakeExternalScanner struct{}
+type CobolExternalScanner struct{}
+type CommentExternalScanner struct{}
+type CooklangExternalScanner struct{}
+type CppExternalScanner struct{}
+type CrystalExternalScanner struct{}
+type CssExternalScanner struct{}
+type CudaExternalScanner struct{}
+type CueExternalScanner struct{}
+type DExternalScanner struct{}
+type DartExternalScanner struct{ ... }
+type DhallExternalScanner struct{}
+type DisassemblyExternalScanner struct{}
+type DjotExternalScanner struct{}
+type DockerfileExternalScanner struct{}
+type DoxygenExternalScanner struct{}
+type DtdExternalScanner struct{}
+type EarthfileExternalScanner struct{}
+type EditorconfigExternalScanner struct{}
+type ElixirExternalScanner struct{}
+type ElmExternalScanner struct{}
+type ErlangExternalScanner struct{}
+type ExtensionEntry struct{ ... }
+type ExternalScannerSourceFile struct{ ... }
+type ExternalScannerSpec struct{ ... }
+    func ExternalScannerSpecs() []ExternalScannerSpec
+type FennelExternalScanner struct{}
+type FirrtlExternalScanner struct{}
+type FishExternalScanner struct{}
+type FoamExternalScanner struct{}
+type FortranExternalScanner struct{}
+type FsharpExternalScanner struct{}
+type GdscriptExternalScanner struct{}
+type GenericTokenSource struct{ ... }
+    func NewGenericTokenSource(src []byte, lang *gotreesitter.Language) (*GenericTokenSource, error)
+type GitcommitExternalScanner struct{}
+type GleamExternalScanner struct{}
+type GnExternalScanner struct{}
+type GoExternalScanner struct{}
+type GoTokenSource struct{ ... }
+    func NewGoTokenSource(src []byte, lang *gotreesitter.Language) (*GoTokenSource, error)
+type GodotResourceExternalScanner struct{}
+type GrammarMaintenanceClass string
+    const GrammarMaintenanceMirror GrammarMaintenanceClass = "mirror" ...
+type GrammarOwnership struct{ ... }
+type GrammarSource string
+    const GrammarSourceUnknown GrammarSource = "unknown" ...
+type HTMLExternalScanner struct{}
+type HTMLTokenSource struct{ ... }
+    func NewHTMLTokenSource(src []byte, lang *gotreesitter.Language) (*HTMLTokenSource, error)
+type HackExternalScanner struct{}
+type HaskellExternalScanner struct{}
+type HaxeExternalScanner struct{}
+type HclExternalScanner struct{ ... }
+type HlslExternalScanner struct{}
+type JSONTokenSource struct{ ... }
+    func NewJSONTokenSource(src []byte, lang *gotreesitter.Language) (*JSONTokenSource, error)
+type JanetExternalScanner struct{}
+type JavaScriptExternalScanner struct{ ... }
+type JavaTokenSource struct{ ... }
+    func NewJavaTokenSource(src []byte, lang *gotreesitter.Language) (*JavaTokenSource, error)
+type JsdocExternalScanner struct{}
+type JsonnetExternalScanner struct{}
+type JuliaExternalScanner struct{}
+type JustExternalScanner struct{}
+type KconfigExternalScanner struct{}
+type KdlExternalScanner struct{}
+type KotlinExternalScanner struct{ ... }
+type LangEntry struct{ ... }
+    func AllLanguages() []LangEntry
+    func DetectLanguage(filename string) *LangEntry
+    func DetectLanguageByName(name string) *LangEntry
+    func DetectLanguageByShebang(firstLine string) *LangEntry
+type LessExternalScanner struct{}
+type LiquidExternalScanner struct{}
+type LuaExternalScanner struct{}
+type LuaTokenSource struct{ ... }
+    func NewLuaTokenSource(src []byte, lang *gotreesitter.Language) (*LuaTokenSource, error)
+type LuauExternalScanner struct{}
+type MarkdownExternalScanner struct{}
+type MarkdownInlineExternalScanner struct{}
+type MatlabExternalScanner struct{}
+type MojoExternalScanner struct{}
+type MoveExternalScanner struct{}
+type NginxExternalScanner struct{}
+type NickelExternalScanner struct{}
+type NimExternalScanner struct{}
+type NixExternalScanner struct{}
+type NorgExternalScanner struct{}
+type NushellExternalScanner struct{}
+type OcamlExternalScanner struct{}
+type OdinExternalScanner struct{}
+type OrgExternalScanner struct{}
+type OutlineCensusResult struct{ ... }
+type OutlineCensusRow struct{ ... }
+type OutlineTier string
+    const OutlineTierOne OutlineTier = "T1" ...
+type ParseBackend string
+    const ParseBackendUnsupported ParseBackend = "unsupported" ...
+type ParsePolicy struct{ ... }
+    func DefaultPolicy() ParsePolicy
+type ParseQuality string
+    const ParseQualityFull ParseQuality = "full" ...
+type ParseSupport struct{ ... }
+    func AuditParseSupport() []ParseSupport
+    func EvaluateParseSupport(entry LangEntry, lang *gotreesitter.Language) ParseSupport
+type ParsedFile struct{ ... }
+type PerlExternalScanner struct{}
+type PhpExternalScanner struct{}
+type PklExternalScanner struct{}
+type PowershellExternalScanner struct{}
+type ProgressEvent struct{ ... }
+type PropertiesExternalScanner struct{}
+type PugExternalScanner struct{}
+type PurescriptExternalScanner struct{}
+type PythonExternalScanner struct{ ... }
+type RExternalScanner struct{}
+type RacketExternalScanner struct{}
+type RescriptExternalScanner struct{}
+type RonExternalScanner struct{}
+type RstExternalScanner struct{}
+type RubyExternalScanner struct{}
+type RustExternalScanner struct{ ... }
+type ScalaExternalScanner struct{}
+type ScssExternalScanner struct{}
+type SqlExternalScanner struct{}
+type SquirrelExternalScanner struct{}
+type StarlarkExternalScanner struct{}
+type SvelteExternalScanner struct{}
+type SwiftExternalScanner struct{ ... }
+type TablegenExternalScanner struct{}
+type TclExternalScanner struct{}
+type TealExternalScanner struct{}
+type TemplExternalScanner struct{}
+type TlaplusExternalScanner struct{}
+type TomlExternalScanner struct{}
+type TomlTokenSource struct{ ... }
+    func NewTomlTokenSource(src []byte, lang *gotreesitter.Language) (*TomlTokenSource, error)
+type TsxExternalScanner struct{ ... }
+type TypeScriptExternalScanner struct{ ... }
+type TypstExternalScanner struct{}
+type UxntalExternalScanner struct{}
+type VhdlExternalScanner struct{}
+type VueExternalScanner struct{}
+type WalkStats struct{ ... }
+type WgslExternalScanner struct{}
+type WolframExternalScanner struct{}
+type XMLExternalScanner struct{}
+type YamlExternalScanner struct{}
+type YuckExternalScanner struct{}
+
+===== PARSER =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+type Parser struct {
+	// Has unexported fields.
+}
+    Parser reads parse tables from a Language and produces a syntax tree. It
+    supports GLR parsing: when a (state, symbol) pair maps to multiple actions,
+    the parser forks the stack and explores all alternatives in parallel while
+    preserving distinct parse paths. Duplicate stack versions are collapsed and
+    ambiguities are resolved at selection time.
+
+    Parser is not safe for concurrent use. Use one parser per goroutine, a
+    ParserPool, or guard shared parser instances with external synchronization.
+
+func NewParser(lang *Language) *Parser
+func (p *Parser) CancellationFlag() *uint32
+func (p *Parser) ClearAdmissionCandidateRoute()
+func (p *Parser) DebugCNodeMemoCacheStats() (cacheLen int, thrash uint32)
+func (p *Parser) DebugCNodeMemoOperationStats() (peakEntries int, peakBytes uint64, collisions uint64)
+func (p *Parser) DebugRecoveryRuntimeStats() RecoveryRuntimeStats
+func (p *Parser) ForestCapTieStats() ForestCapTieStats
+func (p *Parser) ForestDeclineInfo() (offset uint32, sym Symbol, reason string, states []StateID)
+func (p *Parser) IncludedRanges() []Range
+func (p *Parser) InferredRootSymbol() (Symbol, bool)
+func (p *Parser) Language() *Language
+func (p *Parser) Logger() ParserLogger
+func (p *Parser) Parse(source []byte) (*Tree, error)
+func (p *Parser) ParseForestExperimental(source []byte) (*Tree, bool)
+func (p *Parser) ParseIncremental(source []byte, oldTree *Tree) (*Tree, error)
+func (p *Parser) ParseIncrementalProfiled(source []byte, oldTree *Tree) (*Tree, IncrementalParseProfile, error)
+func (p *Parser) ParseIncrementalStrict(source []byte, oldTree *Tree) (*Tree, error)
+func (p *Parser) ParseIncrementalUTF16(source []uint16, oldTree *Tree) (*Tree, error)
+func (p *Parser) ParseIncrementalUTF16Bytes(source []byte, oldTree *Tree, order UTF16ByteOrder) (*Tree, error)
+func (p *Parser) ParseIncrementalUTF16BytesWithTokenSourceFactory(source []byte, oldTree *Tree, order UTF16ByteOrder, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseIncrementalUTF16WithTokenSourceFactory(source []uint16, oldTree *Tree, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseIncrementalWithTokenSource(source []byte, oldTree *Tree, ts TokenSource) (*Tree, error)
+func (p *Parser) ParseIncrementalWithTokenSourceFactory(source []byte, oldTree *Tree, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseIncrementalWithTokenSourceFactoryStrict(source []byte, oldTree *Tree, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseIncrementalWithTokenSourceProfiled(source []byte, oldTree *Tree, ts TokenSource) (*Tree, IncrementalParseProfile, error)
+func (p *Parser) ParseIncrementalWithTokenSourceStrict(source []byte, oldTree *Tree, ts TokenSource) (*Tree, error)
+func (p *Parser) ParseNoResultCompatibilityBenchmarkOnly(source []byte) (*Tree, error)
+func (p *Parser) ParseNoTreeBenchmarkOnly(source []byte) (*Tree, error)
+func (p *Parser) ParseNoTreeWithExternalCheckpointsBenchmarkOnly(source []byte) (*Tree, error)
+func (p *Parser) ParseStrict(source []byte) (*Tree, error)
+func (p *Parser) ParseUTF16(source []uint16) (*Tree, error)
+func (p *Parser) ParseUTF16Bytes(source []byte, order UTF16ByteOrder) (*Tree, error)
+func (p *Parser) ParseUTF16BytesWithTokenSourceFactory(source []byte, order UTF16ByteOrder, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseUTF16WithTokenSourceFactory(source []uint16, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseWith(source []byte, opts ...ParseOption) (ParseResult, error)
+func (p *Parser) ParseWithStrict(source []byte, opts ...ParseOption) (ParseResult, error)
+func (p *Parser) ParseWithTokenSource(source []byte, ts TokenSource) (*Tree, error)
+func (p *Parser) ParseWithTokenSourceFactory(source []byte, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseWithTokenSourceFactoryStrict(source []byte, factory TokenSourceFactory) (*Tree, error)
+func (p *Parser) ParseWithTokenSourceStrict(source []byte, ts TokenSource) (*Tree, error)
+func (p *Parser) SetAdmissionCandidateRoute(enabled bool)
+func (p *Parser) SetAmbiguityProfile(profile *AmbiguityProfile)
+func (p *Parser) SetCancellationFlag(flag *uint32)
+func (p *Parser) SetGLRTrace(enabled bool)
+func (p *Parser) SetIncludedRanges(ranges []Range)
+func (p *Parser) SetIncludedUTF16ByteRanges(source []byte, order UTF16ByteOrder, ranges []UTF16Range) error
+func (p *Parser) SetIncludedUTF16Ranges(source []uint16, ranges []UTF16Range) bool
+func (p *Parser) SetLogger(logger ParserLogger)
+func (p *Parser) SetTimeoutMicros(timeoutMicros uint64)
+func (p *Parser) TimeoutMicros() uint64
+
+===== NODE =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+type Node struct {
+	// Has unexported fields.
+}
+    Node is a syntax tree node.
+
+func NewLeafNode(sym Symbol, named bool, startByte, endByte uint32, startPoint, endPoint Point) *Node
+func NewParentNode(sym Symbol, named bool, children []*Node, fieldIDs []FieldID, ...) *Node
+func (n *Node) Child(i int) *Node
+func (n *Node) ChildByFieldName(name string, lang *Language) *Node
+func (n *Node) ChildCount() int
+func (n *Node) Children() []*Node
+func (n *Node) DescendantForByteRange(startByte, endByte uint32) *Node
+func (n *Node) DescendantForPointRange(startPoint, endPoint Point) *Node
+func (n *Node) Edit(edit InputEdit)
+func (n *Node) EndByte() uint32
+func (n *Node) EndPoint() Point
+func (n *Node) FieldNameForChild(i int, lang *Language) string
+func (n *Node) HasChanges() bool
+func (n *Node) HasError() bool
+func (n *Node) HasErrorOrMissing() bool
+func (n *Node) IsError() bool
+func (n *Node) IsExtra() bool
+func (n *Node) IsMissing() bool
+func (n *Node) IsNamed() bool
+func (n *Node) NamedChild(i int) *Node
+func (n *Node) NamedChildCount() int
+func (n *Node) NamedDescendantForByteRange(startByte, endByte uint32) *Node
+func (n *Node) NamedDescendantForPointRange(startPoint, endPoint Point) *Node
+func (n *Node) NamedNodeAtByte(byteOffset uint32) *Node
+func (n *Node) NextSibling() *Node
+func (n *Node) NodeAtByte(byteOffset uint32) *Node
+func (n *Node) Parent() *Node
+func (n *Node) ParseState() StateID
+func (n *Node) PreGotoState() StateID
+func (n *Node) PrevSibling() *Node
+func (n *Node) Range() Range
+func (n *Node) SExpr(lang *Language) string
+func (n *Node) StartByte() uint32
+func (n *Node) StartPoint() Point
+func (n *Node) Symbol() Symbol
+func (n *Node) Text(source []byte) string
+func (n *Node) Type(lang *Language) string
+
+===== NEW QUERY =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func NewQuery(source string, lang *Language) (*Query, error)
+    NewQuery compiles query source (tree-sitter .scm format) against a language.
+    It returns an error if the query syntax is invalid or references unknown
+    node types or field names.
+
+    NewQuery is a thin call to NewQueryWithOptions with no options;
+    its signature and behavior are unchanged from before NewQueryWithOptions
+    existed. See NewQueryWithOptions to opt into WithStrictPatternValidation.
+

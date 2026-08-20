@@ -1,0 +1,96 @@
+===== REQUIRED GRAMMARS =====
+package grammars // import "github.com/odvcencio/gotreesitter/grammars"
+
+func JavascriptLanguage() *gotreesitter.Language
+    JavascriptLanguage returns the javascript language definition.
+
+package grammars // import "github.com/odvcencio/gotreesitter/grammars"
+
+func TypescriptLanguage() *gotreesitter.Language
+    TypescriptLanguage returns the typescript language definition.
+
+package grammars // import "github.com/odvcencio/gotreesitter/grammars"
+
+func TsxLanguage() *gotreesitter.Language
+    TsxLanguage returns the tsx language definition.
+
+
+===== PARSER CREATION =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func NewParser(lang *Language) *Parser
+    NewParser creates a new Parser for the given language.
+
+
+===== PARSE =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (p *Parser) Parse(source []byte) (*Tree, error)
+    Parse tokenizes and parses source using the built-in DFA lexer, returning
+    a syntax tree. This works for hand-built grammars that provide LexStates.
+    For real grammars that need a custom lexer, use ParseWithTokenSource.
+    If the input is empty, it returns a tree with a nil root and no error.
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (p *Parser) ParseStrict(source []byte) (*Tree, error)
+    ParseStrict is like Parse, but returns ErrParseStoppedEarly when parsing
+    returns a partial tree due to timeout, cancellation, token-source EOF,
+    or a parser safety limit. The partial tree is returned alongside the error.
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (p *Parser) SetTimeoutMicros(timeoutMicros uint64)
+    SetTimeoutMicros configures a per-parse timeout in microseconds.
+    A value of 0 disables timeout checks. Parse methods preserve tree-sitter's
+    partial-tree behavior on timeout: they return a tree and nil error,
+    with tree.ParseStopReason() == ParseStopTimeout and tree.ParseStoppedEarly()
+    true. Use ParseStrict or another strict parse method to treat early stops as
+    errors.
+
+
+===== LOCATIONS AND TRAVERSAL =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) StartByte() uint32
+    StartByte returns the byte offset where this node begins.
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) EndByte() uint32
+    EndByte returns the byte offset where this node ends (exclusive).
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) StartPoint() Point
+    StartPoint returns the row/column position where this node begins.
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) EndPoint() Point
+    EndPoint returns the row/column position where this node ends.
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) Child(i int) *Node
+    Child returns the i-th child, or nil if i is out of range.
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) NamedChild(i int) *Node
+    NamedChild returns the i-th named child (skipping anonymous children),
+    or nil if i is out of range.
+
+
+===== QUERY =====
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func NewQuery(source string, lang *Language) (*Query, error)
+    NewQuery compiles query source (tree-sitter .scm format) against a language.
+    It returns an error if the query syntax is invalid or references unknown
+    node types or field names.
+
+    NewQuery is a thin call to NewQueryWithOptions with no options;
+    its signature and behavior are unchanged from before NewQueryWithOptions
+    existed. See NewQueryWithOptions to opt into WithStrictPatternValidation.
+

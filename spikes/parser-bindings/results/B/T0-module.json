@@ -1,0 +1,11 @@
+{
+	"Path": "github.com/odvcencio/gotreesitter",
+	"Version": "v0.51.0",
+	"Time": "2026-08-16T13:26:21Z",
+	"Indirect": true,
+	"Dir": "/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0",
+	"GoMod": "/home/sbomber1/go/pkg/mod/cache/download/github.com/odvcencio/gotreesitter/@v/v0.51.0.mod",
+	"GoVersion": "1.22.0",
+	"Sum": "h1:tSAcoC1wGyCIOgXF5BgwjiTgA+UW8jW2Lb15wDyXRWk=",
+	"GoModSum": "h1:hBVkghd0paaYAVwd2087vfwdeU984bQbMo9LvpE0moo="
+}
