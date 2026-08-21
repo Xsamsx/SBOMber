@@ -58,9 +58,7 @@ inputs.
 
 ## Additional evidence
 
-`Parser.SetLanguage` returned nil using:
-
-- `go-tree-sitter` v0.25.0;
+`Parser.SetLanguage` returned no error with the pinned binding and grammar versions, confirming ABI compatibility.25.0;
 - `tree-sitter-javascript` v0.25.0;
 - `tree-sitter-typescript` v0.23.2.
 

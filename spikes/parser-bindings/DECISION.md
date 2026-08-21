@@ -10,7 +10,7 @@ Use:
 
 Fallback: `gotreesitter` v0.51.0.
 
-`Parser.SetLanguage` returned nil with the selected versions.
+`Parser.SetLanguage` returned no error with the pinned binding and grammar versions, confirming ABI compatibility.
 
 ## Candidates
 
@@ -94,6 +94,7 @@ Component 1 must:
 ## Limitations
 
 - Candidate A’s semantic adapter is not yet implemented.
+- This selection is confirmed when Candidate A’s adapter reproduces all 13 expected files using `queries/usage.scm`. If the required field assignments differ, the decision reopens against the recorded fallback.
 - Query field assignments require direct verification.
 - Candidate C was not fully evaluated.
 - Full-corpus throughput and GitHub Actions matrix tests were not run.
