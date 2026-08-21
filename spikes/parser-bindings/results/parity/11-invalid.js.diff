@@ -1,0 +1,5 @@
+--- /home/sbomber1/dev/sbomber/component2/spikes/parser-bindings/results/A/sexp/11-invalid.js.txt	2026-08-21 12:01:31.970541487 +1000
++++ /home/sbomber1/dev/sbomber/component2/spikes/parser-bindings/results/B/sexp/11-invalid.js.txt	2026-08-21 12:01:31.992541721 +1000
+@@ -1 +1 @@
+-(program (import_statement (import_clause (named_imports (import_specifier (identifier)))) (string (string_fragment))) (ERROR (identifier) (ERROR (identifier)) (property_identifier)))
++(ERROR (import_statement (import_clause (named_imports (import_specifier (identifier)))) (string (string_fragment))) (ERROR (ERROR (identifier) (identifier))) (identifier))

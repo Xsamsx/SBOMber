@@ -1,0 +1,1 @@
+(program (import_statement (import_clause (named_imports (import_specifier (identifier)))) (string (string_fragment))) (ERROR (identifier) (ERROR (identifier)) (property_identifier)))

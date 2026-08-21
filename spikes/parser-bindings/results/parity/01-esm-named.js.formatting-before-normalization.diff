@@ -1,0 +1,5 @@
+--- results/A/sexp/01-esm-named.js.raw-before-normalization.txt	2026-08-21 11:58:17.754478138 +1000
++++ results/B/sexp/01-esm-named.js.txt	2026-08-21 11:58:17.782478434 +1000
+@@ -1 +1 @@
+-(program (import_statement (import_clause (named_imports (import_specifier name: (identifier)))) source: (string (string_fragment))) (export_statement declaration: (function_declaration name: (identifier) parameters: (formal_parameters (identifier)) body: (statement_block (return_statement (call_expression function: (call_expression function: (identifier) arguments: (arguments (string (string_fragment)))) arguments: (arguments (identifier))))))))
++(program (import_statement (import_clause (named_imports (import_specifier (identifier)))) (string (string_fragment))) (export_statement (function_declaration (identifier) (formal_parameters (identifier)) (statement_block (return_statement (call_expression (call_expression (identifier) (arguments (string (string_fragment)))) (arguments (identifier))))))))

@@ -1,0 +1,21 @@
+PASS: 01-esm-named.js
+PASS: 02-esm-default-alias.js
+PASS: 03-esm-namespace.js
+PASS: 04-cjs-require.js
+PASS: 05-cjs-destructured.js
+PASS: 06-subpath.js
+PASS: 07-dynamic-import.js
+PASS: 08-type-only.ts
+PASS: 09-tsx-component.tsx
+PASS: 10-reachability.js
+MISMATCH: 11-invalid.js
+PASS: 12-edge.js
+PASS: 13-empty.js
+=== T2b Named-Node S-expression Parity ===
+2026-08-21T12:01:32+10:00
+fixtures=13
+mismatches=1
+candidateA=/tmp/harness-A
+candidateB=/tmp/harness-B
+querySHA256=a47429d70dcde4fcbccd760e2eae9afe6f03a8b00600b14dde36ff80575f7864
+normalization=Candidate A field labels removed

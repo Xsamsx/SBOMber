@@ -1,0 +1,1 @@
+(program (import_statement (import_clause (named_imports (import_specifier (identifier)))) (string (string_fragment))) (export_statement (function_declaration (identifier) (formal_parameters (identifier)) (statement_block (return_statement (call_expression (call_expression (identifier) (arguments (string (string_fragment)))) (arguments (identifier))))))))
