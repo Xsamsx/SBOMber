@@ -1,0 +1,21 @@
+=== T10 Test-Suite Scale ===
+2026-08-21T17:06:01+10:00
+module=github.com/tree-sitter/go-tree-sitter
+moduleDir=/home/sbomber1/go/pkg/mod/github.com/tree-sitter/go-tree-sitter@v0.25.0
+CGO_ENABLED=1
+
+testFiles=8
+testFunctions=164
+
+=== GO TEST ===
+--- FAIL: TestParsingOnMultipleThreads (0.00s)
+    parser_test.go:553: 
+        	Error Trace:	/home/sbomber1/go/pkg/mod/github.com/tree-sitter/go-tree-sitter@v0.25.0/parser_test.go:553
+        	Error:      	Expected nil, but got: &fs.PathError{Op:"open", Path:"tree-sitter/cli/src/tests/parser_test.rs", Err:0x2}
+        	Test:       	TestParsingOnMultipleThreads
+FAIL
+FAIL	github.com/tree-sitter/go-tree-sitter	0.784s
+FAIL
+Command exited with non-zero status 1
+elapsed=2.91 maxrss_kb=147248 exit=1
+commandStatus=1

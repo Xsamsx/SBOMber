@@ -1,0 +1,46 @@
+=== T10 Test-Suite Scale ===
+2026-08-21T17:06:04+10:00
+module=github.com/odvcencio/gotreesitter
+moduleDir=/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0
+CGO_ENABLED=0
+
+testFiles=737
+testFunctions=4587
+
+=== GO TEST ===
+# github.com/odvcencio/gotreesitter/roottest/highlight.test
+/usr/lib/go-1.26/pkg/tool/linux_amd64/link: mapping output file failed: disk quota exceeded
+# github.com/odvcencio/gotreesitter/roottest/parse.test
+/usr/lib/go-1.26/pkg/tool/linux_amd64/link: mapping output file failed: disk quota exceeded
+# github.com/odvcencio/gotreesitter/roottest/query.test
+/usr/lib/go-1.26/pkg/tool/linux_amd64/link: mapping output file failed: disk quota exceeded
+# github.com/odvcencio/gotreesitter/wasm/runtime.test
+/usr/lib/go-1.26/pkg/tool/linux_amd64/link: mapping output file failed: disk quota exceeded
+# github.com/odvcencio/gotreesitter/grammargen [github.com/odvcencio/gotreesitter/grammargen.test]
+compile: writing output: write $WORK/b262/_pkg_.a: disk quota exceeded
+# github.com/odvcencio/gotreesitter [github.com/odvcencio/gotreesitter.test]
+compile: writing output: write $WORK/b001/_pkg_.a: disk quota exceeded
+FAIL	github.com/odvcencio/gotreesitter [build failed]
+?   	github.com/odvcencio/gotreesitter/cmd/benchgate	[no test files]
+ok  	github.com/odvcencio/gotreesitter/cmd/benchmatrix	0.119s
+?   	github.com/odvcencio/gotreesitter/cmd/c4tablestats	[no test files]
+?   	github.com/odvcencio/gotreesitter/cmd/gen_linguist	[no test files]
+?   	github.com/odvcencio/gotreesitter/cmd/gen_subset_blob_embeds	[no test files]
+ok  	github.com/odvcencio/gotreesitter/cmd/grammar_update_guard	0.317s
+ok  	github.com/odvcencio/gotreesitter/cmd/grammar_updater	0.569s
+ok  	github.com/odvcencio/gotreesitter/cmd/grammarblobprobe	2.925s
+ok  	github.com/odvcencio/gotreesitter/cmd/grammargen	0.614s
+?   	github.com/odvcencio/gotreesitter/cmd/harnessgate	[no test files]
+?   	github.com/odvcencio/gotreesitter/cmd/parity_report	[no test files]
+ok  	github.com/odvcencio/gotreesitter/cmd/pgo_repdriver	0.227s [no tests to run]
+ok  	github.com/odvcencio/gotreesitter/cmd/releasegate	0.205s
+ok  	github.com/odvcencio/gotreesitter/cmd/ts2go	0.376s
+ok  	github.com/odvcencio/gotreesitter/cmd/tsquery	0.101s
+ok  	github.com/odvcencio/gotreesitter/cmd/wasmassets	0.146s
+ok  	github.com/odvcencio/gotreesitter/corpuscheck	0.570s
+?   	github.com/odvcencio/gotreesitter/corpuscheck/cmd/corpuscheck	[no test files]
+FAIL	github.com/odvcencio/gotreesitter/grammargen [build failed]
+?   	github.com/odvcencio/gotreesitter/grammargen/grammarjs	[no test files]
+Command exited with non-zero status 124
+elapsed=180.12 maxrss_kb=1321640 exit=124
+commandStatus=124

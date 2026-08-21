@@ -1,0 +1,7 @@
+=== T10 Tag Dates ===
+2026-08-21T17:00:37+10:00
+repository=tree-sitter/go-tree-sitter
+
+{"authored":"2024-10-14T04:41:30Z","committed":"2024-10-14T20:36:00Z","tag":"v0.24.0"}
+{"authored":"2024-08-26T16:34:06Z","committed":"2024-08-26T16:35:45Z","tag":"v0.23.1"}
+{"authored":"2024-08-13T13:07:39Z","committed":"2024-08-24T03:32:17Z","tag":"v0.23.0"}

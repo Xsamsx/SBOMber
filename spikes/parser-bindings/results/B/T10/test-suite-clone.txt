@@ -1,0 +1,50 @@
+# github.com/odvcencio/gotreesitter/grammars
+compile: writing output: write $WORK/b229/_pkg_.a: disk quota exceeded
+github.com/odvcencio/gotreesitter: write /tmp/go-build429147663/b280/vet.cfg: disk quota exceeded
+github.com/odvcencio/gotreesitter/taproot/walk: write /tmp/go-build429147663/b294/importcfg: disk quota exceeded
+# github.com/odvcencio/gotreesitter/grammars [github.com/odvcencio/gotreesitter/internal/parsercorephase0.test]
+compile: writing output: write $WORK/b281/_pkg_.a: disk quota exceeded
+# github.com/odvcencio/gotreesitter/grammargen
+compile: writing output: write $WORK/b236/_pkg_.a: disk quota exceeded
+# github.com/odvcencio/gotreesitter [github.com/odvcencio/gotreesitter.test]
+compile: writing output: write $WORK/b001/_pkg_.a: disk quota exceeded
+FAIL	github.com/odvcencio/gotreesitter [build failed]
+?   	github.com/odvcencio/gotreesitter/cmd/benchgate	[no test files]
+ok  	github.com/odvcencio/gotreesitter/cmd/benchmatrix	0.197s
+?   	github.com/odvcencio/gotreesitter/cmd/c4tablestats	[no test files]
+?   	github.com/odvcencio/gotreesitter/cmd/gen_linguist	[no test files]
+?   	github.com/odvcencio/gotreesitter/cmd/gen_subset_blob_embeds	[no test files]
+FAIL	github.com/odvcencio/gotreesitter/cmd/grammar_update_guard [build failed]
+ok  	github.com/odvcencio/gotreesitter/cmd/grammar_updater	0.399s
+FAIL	github.com/odvcencio/gotreesitter/cmd/grammarblobprobe [build failed]
+FAIL	github.com/odvcencio/gotreesitter/cmd/grammargen [build failed]
+?   	github.com/odvcencio/gotreesitter/cmd/harnessgate	[no test files]
+FAIL	github.com/odvcencio/gotreesitter/cmd/parity_report [build failed]
+FAIL	github.com/odvcencio/gotreesitter/cmd/pgo_repdriver [build failed]
+ok  	github.com/odvcencio/gotreesitter/cmd/releasegate	0.214s
+ok  	github.com/odvcencio/gotreesitter/cmd/ts2go	0.212s
+ok  	github.com/odvcencio/gotreesitter/cmd/tsquery	0.142s
+FAIL	github.com/odvcencio/gotreesitter/cmd/wasmassets [build failed]
+FAIL	github.com/odvcencio/gotreesitter/corpuscheck [build failed]
+FAIL	github.com/odvcencio/gotreesitter/corpuscheck/cmd/corpuscheck [build failed]
+FAIL	github.com/odvcencio/gotreesitter/grammargen [build failed]
+FAIL	github.com/odvcencio/gotreesitter/grammargen/grammarjs [build failed]
+FAIL	github.com/odvcencio/gotreesitter/grammars [build failed]
+FAIL	github.com/odvcencio/gotreesitter/grammars/lean [build failed]
+FAIL	github.com/odvcencio/gotreesitter/grep [build failed]
+ok  	github.com/odvcencio/gotreesitter/internal/benchfixtures	0.011s
+ok  	github.com/odvcencio/gotreesitter/internal/grammarpatch	0.130s
+FAIL	github.com/odvcencio/gotreesitter/internal/parsercorephase0 [build failed]
+FAIL	github.com/odvcencio/gotreesitter/parser_result_test [build failed]
+FAIL	github.com/odvcencio/gotreesitter/roottest/bench [build failed]
+FAIL	github.com/odvcencio/gotreesitter/roottest/highlight [build failed]
+FAIL	github.com/odvcencio/gotreesitter/roottest/parse [build failed]
+FAIL	github.com/odvcencio/gotreesitter/roottest/query [build failed]
+FAIL	github.com/odvcencio/gotreesitter/taproot [build failed]
+ok  	github.com/odvcencio/gotreesitter/taproot/diag	0.133s
+FAIL	github.com/odvcencio/gotreesitter/taproot/walk [build failed]
+FAIL	github.com/odvcencio/gotreesitter/wasm/runtime [build failed]
+FAIL
+Command exited with non-zero status 1
+elapsed=40.06 maxrss_kb=1432844 exit=1
+commandStatus=1

@@ -1,0 +1,30 @@
+=== T10 Additional Maturity Evidence ===
+2026-08-21T17:16:43+10:00
+module=github.com/tree-sitter/go-tree-sitter
+
+=== PKG.GO.DEV DOWNSTREAM USE ===
+url=https://pkg.go.dev/github.com/tree-sitter/go-tree-sitter
+Imported by: 174
+
+=== LICENCE ===
+/home/sbomber1/go/pkg/mod/github.com/tree-sitter/go-tree-sitter@v0.25.0/LICENSE
+0eea8dc45e89deeb03c7799bbbc7b4688f365fb274562f4540ecfebdea82e727  /home/sbomber1/go/pkg/mod/github.com/tree-sitter/go-tree-sitter@v0.25.0/LICENSE
+
+=== CHANGELOGS ===
+
+=== COMMITS IN LAST 90 DAYS ===
+0
+
+=== TOP AUTHORS IN LAST 90 DAYS ===
+
+=== TOP AUTHORS — ALL CHECKED-OUT HISTORY ===
+     22 Amaan Qureshi <amaanq12@gmail.com>
+      5 Amaan Qureshi <git@amaanq.com>
+      3 Toπ <git@topi.wtf>
+      2 Amaan Qureshi <amaan.qureshi@datadoghq.com>
+      1 Joshua Evans <80655439+joshua-Evans-1@users.noreply.github.com>
+      1 John Murray <me@johnmurray.io>
+      1 Jesse Hathaway <jesse@mbuki-mvuki.org>
+
+=== BREAKING REFERENCES — LAST 180 DAYS ===
+No matching commit messages.

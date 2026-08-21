@@ -1,0 +1,9 @@
+=== T10 Repository Checkout ===
+2026-08-21T17:18:19+10:00
+modulePinnedVersion=v0.25.0
+cloneTestedCommit=c9492002f76ed75037e3fe6d3bbabb54ed3e1ff5
+cloneExactTag=none
+
+The module download metadata did not provide Origin.Hash.
+The clone test therefore measured the current repository checkout,
+while the module-cache counts measured the pinned dependency.

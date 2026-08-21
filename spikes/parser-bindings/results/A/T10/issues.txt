@@ -1,0 +1,24 @@
+=== T10 Issue Detail ===
+2026-08-21T17:00:36+10:00
+repository=tree-sitter/go-tree-sitter
+
+openNonPRIssues=6
+
+=== OLDEST OPEN ISSUE ===
+{
+  "number": 19,
+  "title": "Binding Inconsistencies",
+  "created_at": "2024-11-07T20:08:38Z",
+  "updated_at": "2024-12-31T11:47:37Z",
+  "comments": 13,
+  "html_url": "https://github.com/tree-sitter/go-tree-sitter/issues/19"
+}
+
+=== OLDEST OPEN ISSUE WITH ZERO COMMENTS ===
+{
+  "number": 49,
+  "title": "Language grammar dependencies in go.mod pollute downstream go.sum files",
+  "created_at": "2026-01-15T13:54:02Z",
+  "updated_at": "2026-01-15T13:54:02Z",
+  "html_url": "https://github.com/tree-sitter/go-tree-sitter/issues/49"
+}

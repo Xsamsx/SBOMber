@@ -4,15 +4,14 @@
 
 Runtime grammar loading does not remove Candidate A's CGO requirement.
 
-In version 0.25.0, `NewLanguage` accepts an `unsafe.Pointer` and converts it
-to `*C.TSLanguage`. It only wraps a grammar pointer that has already been
-obtained; it does not load a grammar library.
+The official README documents using the external `ebitengine/purego` package
+to load a grammar shared library and obtain its language pointer.
 
-No built-in `dlopen`, `LoadLanguage`, `OpenLibrary`, or pure-Go loading
-implementation was found.
+`NewLanguage` then converts that existing pointer to `*C.TSLanguage`. It does
+not replace the parser runtime.
 
-The binding embeds the Tree-sitter C runtime through `lib.c`, imports `C`,
-and calls functions such as `C.ts_parser_new` and
+The binding itself embeds the Tree-sitter C runtime through `lib.c`, imports
+`C`, and calls functions such as `C.ts_parser_new` and
 `C.ts_parser_parse_with_options`.
 
 A binding-only program compiled with `CGO_ENABLED=0` failed because
@@ -20,9 +19,9 @@ A binding-only program compiled with `CGO_ENABLED=0` failed because
 
 ## Decision relevance
 
-Moving grammars into runtime-loaded shared libraries would not make the
-official binding pure Go. It would still require the CGO-based parser runtime
-and would add separate platform-specific grammar libraries to deployment.
+Runtime loading moves each grammar into a platform-specific shared library,
+but the official parser binding remains CGO-based. Deployment would require
+the native parser runtime plus separate grammar libraries.
 
 Candidate D therefore does not improve packaging over Candidate A and remains
 eliminated.

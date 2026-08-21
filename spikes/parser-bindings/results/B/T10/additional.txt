@@ -1,0 +1,74 @@
+=== T10 Additional Maturity Evidence ===
+2026-08-21T17:16:43+10:00
+module=github.com/odvcencio/gotreesitter
+
+=== PKG.GO.DEV DOWNSTREAM USE ===
+url=https://pkg.go.dev/github.com/odvcencio/gotreesitter
+Imported by: 26
+
+=== LICENCE ===
+/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0/LICENSE
+b174fbe1e1cffafb096528de3e8361c90a0d97e7e3f1a32061aae51e983a7cfc  /home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0/LICENSE
+
+=== CHANGELOGS ===
+/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0/CHANGELOG.md
+/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0/policy/release.arb
+/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0/policy/release.test.arb
+
+=== COMMITS IN LAST 90 DAYS ===
+2428
+
+=== TOP AUTHORS IN LAST 90 DAYS ===
+   1747 Oscar Villavicencio <odvcencio@gmail.com>
+    575 Oscar Villavicencio <odvcencio@users.noreply.github.com>
+     63 Oscar Villavicencio <9220505+odvcencio@users.noreply.github.com>
+     13 odvcencio <odvcencio@gmail.com>
+      9 Richard Wooding <richard.wooding@spandigital.com>
+      5 Tomás Senart <tsenart@gmail.com>
+      5 Gomez <gomez@jgsw.ai>
+      4 Gomez <44623899+frozen425@users.noreply.github.com>
+      2 ShiroKSH <kushidashiro@gmail.com>
+      2 Richard Wooding <richardwooding@Richards-Virtual-Machine.local>
+
+=== TOP AUTHORS — ALL CHECKED-OUT HISTORY ===
+   2700 Oscar Villavicencio <odvcencio@gmail.com>
+    627 Oscar Villavicencio <odvcencio@users.noreply.github.com>
+    102 odvcencio <odvcencio@gmail.com>
+     63 Oscar Villavicencio <9220505+odvcencio@users.noreply.github.com>
+     14 Ryan Snodgrass <ryan@sageox.ai>
+      9 Richard Wooding <richard.wooding@spandigital.com>
+      7 vladimir.dergachev <4dergachev@gmail.com>
+      5 Tomás Senart <tsenart@gmail.com>
+      5 Lars Lehtonen <lars.lehtonen@gmail.com>
+      5 Gomez <gomez@jgsw.ai>
+
+=== BREAKING REFERENCES — LAST 180 DAYS ===
+02ee8546 2026-08-11 fix(apex, parser): fix apex class_literal election parity with c oracle (#601)
+71009405 2026-08-11 add(query): Add structural query pattern validation and strict compile mode
+3849999e 2026-08-11 update(ci): Add apidiff job and update parity test regex
+603658c6 2026-08-02 add(outline): add a language-neutral outline projection over a parsed tree (#656)
+f7830c46 2026-08-01 remove(release): Retire owner-waived minor release route
+d3f9eea8 2026-07-31 fix(releasegate): Require signed release receipt IDs
+4aec941d 2026-07-21 update(parser-core, incremental, admission): update core tie-breaking, incremental splice, admission
+8a6a7df6 2026-07-20 fix(parsercore, admission): fix admission fold to fail closed on ties
+f8ac1527 2026-07-15 add(parsercore-phase0): Add bounded one-layer predecessor link folding
+acf307a3 2026-07-13 fix(cgo_harness): Fix fleet reduction authentication and canonicalize gate findings (#318)
+651f2f37 2026-07-02 fix(grammargen): fix lex-mode gate to preserve preferredSyms for zero-width
+38e54e3a 2026-07-02 optimize(grammargen): optimize lex-mode generation to prevent DFA state explosion
+95d81194 2026-07-02 improve(parser): gate degenerate GLR replay on brace evidence to catch truncations
+39304ed6 2026-06-26 refactor(grammargen): add lex mode preference and skip extra-chain lookahead
+4130cbee 2026-06-26 improve(parser): Improve GLR token selection and lexer state handling
+362b3f82 2026-06-17 fix(lexer, parser, grammargen): Fix C-family continuations and token priority logic
+b99dc3a0 2026-05-28 Add grammargen authoring subcommands + docs (#87)
+72775b88 2026-05-25 fix(grammargen): Fix DFA tie-breaking for string-choice token groups
+a46e11e1 2026-05-22 remove(parser): Require explicit reduce-chain hint opt-in
+6d4cf635 2026-05-20 refactor: Consolidate parser tooling and parity coverage
+01f4f040 2026-05-20 remove: Remove legacy generated surfaces
+7ea5e6d4 2026-05-17 fix(glr): Prefer shallower Python GLR branches
+1ab7e5b0 2026-03-18 fix(test): skip LR splitting for JS/TS/TSX grammars
+282aa281 2026-03-16 fix(grammargen): resolve accept symbol tie-breaking to match C parity
+cd2ea332 2026-03-14 add(parser): deterministic GLR branch ordering and leaf token regression tests
+f673dfd1 2026-03-12 fix(query,highlight,objc): objc interface property parity and query fixes
+91cc9674 2026-03-06 fix(glr): correct tie-breaking for duplicate stacks in merge
+7a0ec0d9 2026-03-09 fix(bash): GLR parsing issues with field inheritance and control flow
+49ba7228 2026-03-07 fix(parity): Top50 batch with GLR, scanner, and memory fixes

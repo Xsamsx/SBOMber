@@ -1,0 +1,20 @@
+=== T10 Repository Metadata ===
+2026-08-21T16:58:34+10:00
+repository=tree-sitter/go-tree-sitter
+commitsSince=2026-05-23T06:58:34Z
+
+=== REPOSITORY ===
+{"archived":false,"created_at":"2024-08-13T13:08:01Z","default_branch":"master","description":"Go bindings for tree-sitter","disabled":false,"forks_count":47,"full_name":"tree-sitter/go-tree-sitter","license":"MIT","open_issues_count":15,"pushed_at":"2025-11-16T04:03:20Z","stargazers_count":293,"subscribers_count":9,"updated_at":"2026-08-19T08:15:23Z"}
+
+=== LAST FIVE RELEASES ===
+
+=== LAST TEN TAGS ===
+{"commit":"5432ade78ad6bde797bcdaa272a5953eaba83971","name":"v0.24.0"}
+{"commit":"2c9d04fd77538dfa87cf70f134538f8871741907","name":"v0.23.1"}
+{"commit":"7c613cc3862e9592cd111b3055b443524193acff","name":"v0.23.0"}
+
+=== COMMITS IN LAST 90 DAYS ===
+count=0
+
+=== OLDEST OPEN NON-PR ISSUE ===
+{"comments":13,"created_at":"2024-11-07T20:08:38Z","html_url":"https://github.com/tree-sitter/go-tree-sitter/issues/19","number":19,"title":"Binding Inconsistencies","updated_at":"2024-12-31T11:47:37Z"}

@@ -1,0 +1,3 @@
+ok  	github.com/tree-sitter/go-tree-sitter	0.809s
+elapsed=10.43 maxrss_kb=187748 exit=0
+commandStatus=0

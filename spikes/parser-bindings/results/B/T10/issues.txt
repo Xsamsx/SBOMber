@@ -1,0 +1,18 @@
+=== T10 Issue Detail ===
+2026-08-21T17:00:40+10:00
+repository=odvcencio/gotreesitter
+
+openNonPRIssues=3
+
+=== OLDEST OPEN ISSUE ===
+{
+  "number": 454,
+  "title": "# field reports from downstream user (Windows GUI toolkit, pure-Go editor widget, multiple syntaxes) on latest release versions",
+  "created_at": "2026-07-23T08:56:12Z",
+  "updated_at": "2026-08-16T17:14:35Z",
+  "comments": 17,
+  "html_url": "https://github.com/odvcencio/gotreesitter/issues/454"
+}
+
+=== OLDEST OPEN ISSUE WITH ZERO COMMENTS ===
+"No open non-PR issue with zero comments."

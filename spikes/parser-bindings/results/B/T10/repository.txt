@@ -1,0 +1,32 @@
+=== T10 Repository Metadata ===
+2026-08-21T16:58:37+10:00
+repository=odvcencio/gotreesitter
+commitsSince=2026-05-23T06:58:34Z
+
+=== REPOSITORY ===
+{"archived":false,"created_at":"2026-02-20T03:11:46Z","default_branch":"main","description":"Pure Go tree-sitter runtime","disabled":false,"forks_count":44,"full_name":"odvcencio/gotreesitter","license":"MIT","open_issues_count":4,"pushed_at":"2026-08-21T06:49:15Z","stargazers_count":554,"subscribers_count":1,"updated_at":"2026-08-21T06:07:55Z"}
+
+=== LAST FIVE RELEASES ===
+{"draft":false,"name":"gotreesitter v0.51.0","prerelease":false,"published_at":"2026-08-16T16:58:05Z","tag_name":"v0.51.0"}
+{"draft":false,"name":"gotreesitter v0.50.1","prerelease":false,"published_at":"2026-08-14T22:39:45Z","tag_name":"v0.50.1"}
+{"draft":false,"name":"gotreesitter v0.50.0","prerelease":false,"published_at":"2026-08-14T21:15:20Z","tag_name":"v0.50.0"}
+{"draft":false,"name":"gotreesitter v0.49.0","prerelease":false,"published_at":"2026-08-11T19:41:28Z","tag_name":"v0.49.0"}
+{"draft":false,"name":"gotreesitter v0.48.1","prerelease":false,"published_at":"2026-08-04T22:40:26Z","tag_name":"v0.48.1"}
+
+=== LAST TEN TAGS ===
+{"commit":"8c17e0e942e0a68cf99a820ad0fc047bf2238cfa","name":"v0.51.0"}
+{"commit":"39bb2ae1dff365495857df3c578bbfa57c02cbbb","name":"v0.50.1"}
+{"commit":"9fd59953f9f3e22b2d07290138541bc6dd801cf2","name":"v0.50.0"}
+{"commit":"f13d192e7e768639821c93a40a3f83b477ed66de","name":"v0.49.0"}
+{"commit":"bbd24cda291191df1d83068a2de968161e3c4dc0","name":"v0.48.1"}
+{"commit":"706457c2f63578bfa577918fe960b37ef58688f7","name":"v0.48.0"}
+{"commit":"e5ac093c4a51d859943e02654e3ba21a13d391b2","name":"v0.47.1"}
+{"commit":"000ae6c6e921c02ab8c183fb31f3f16429b0a95d","name":"v0.47.0"}
+{"commit":"af6e3a7fb135d000a77b6d8463cef8e5888eac7f","name":"v0.46.0"}
+{"commit":"74463081f746f188e91f62f25f14c55b9774af70","name":"v0.45.0"}
+
+=== COMMITS IN LAST 90 DAYS ===
+count=2426
+
+=== OLDEST OPEN NON-PR ISSUE ===
+{"comments":17,"created_at":"2026-07-23T08:56:12Z","html_url":"https://github.com/odvcencio/gotreesitter/issues/454","number":454,"title":"# field reports from downstream user (Windows GUI toolkit, pure-Go editor widget, multiple syntaxes) on latest release versions","updated_at":"2026-08-16T17:14:35Z"}
