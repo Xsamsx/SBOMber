@@ -1,0 +1,71 @@
+=== EXPECTED ===
+{
+  "fixture": "02-esm-default-alias.js",
+  "language": "javascript",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "axios",
+      "kind": "esm_default",
+      "local": "axios",
+      "imported": "default",
+      "typeOnly": false,
+      "line": 1,
+      "column": 7
+    },
+    {
+      "specifier": "axios",
+      "kind": "esm_named",
+      "local": "httpGet",
+      "imported": "get",
+      "typeOnly": false,
+      "line": 2,
+      "column": 16
+    }
+  ],
+  "calls": [
+    {
+      "callee": "post",
+      "receiver": "axios",
+      "line": 5,
+      "column": 8
+    },
+    {
+      "callee": "httpGet",
+      "receiver": null,
+      "line": 6,
+      "column": 9
+    }
+  ],
+  "functions": [
+    {
+      "name": "fetchOne",
+      "line": 4,
+      "column": 22,
+      "exported": true
+    }
+  ],
+  "unresolved": []
+}
+
+=== RELEVANT AST ===
+  field="" type="import_statement" named=true bytes=0-26 text="import axios from \"axios\";"
+    field="" type="import_clause" named=true bytes=7-12 text="axios"
+      field="" type="identifier" named=true bytes=7-12 text="axios"
+    field="source" type="string" named=true bytes=18-25 text="\"axios\""
+  field="" type="import_statement" named=true bytes=27-66 text="import { get as httpGet } from \"axios\";"
+    field="" type="import_clause" named=true bytes=34-52 text="{ get as httpGet }"
+        field="" type="import_specifier" named=true bytes=36-50 text="get as httpGet"
+          field="name" type="identifier" named=true bytes=36-39 text="get"
+          field="alias" type="identifier" named=true bytes=43-50 text="httpGet"
+    field="source" type="string" named=true bytes=58-65 text="\"axios\""
+    field="declaration" type="function_declaration" named=true bytes=75-159 text="async function fetchOne(url) {\n  await axios.post(url, {});\n  return httpGet(url);\n}"
+      field="name" type="identifier" named=true bytes=90-98 text="fetchOne"
+        field="" type="identifier" named=true bytes=99-102 text="url"
+            field="" type="call_expression" named=true bytes=114-133 text="axios.post(url, {})"
+              field="function" type="member_expression" named=true bytes=114-124 text="axios.post"
+                field="object" type="identifier" named=true bytes=114-119 text="axios"
+                field="" type="identifier" named=true bytes=125-128 text="url"
+          field="" type="call_expression" named=true bytes=144-156 text="httpGet(url)"
+            field="function" type="identifier" named=true bytes=144-151 text="httpGet"
+              field="" type="identifier" named=true bytes=152-155 text="url"

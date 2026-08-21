@@ -38,9 +38,9 @@ type Function struct {
 type Unresolved struct {
 	Kind       string `json:"kind"`
 	Expression string `json:"expression"`
-	Reason     string `json:"reason"`
 	Line       int    `json:"line"`
 	Column     int    `json:"column"`
+	Reason     string `json:"reason"`
 }
 
 func newResult(fixture, language string) Result {

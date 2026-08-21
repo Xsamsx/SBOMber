@@ -1,0 +1,548 @@
+=== T2 Remaining Extraction Contracts ===
+2026-08-21T12:55:10+10:00
+
+============================================================
+FIXTURE: 03-esm-namespace.js
+============================================================
+
+--- SOURCE ---
+     1	import * as _ from "lodash";
+     2	
+     3	const method = "template";
+     4	
+     5	export function build(src, data) {
+     6	  const compiled = _.template(src);
+     7	  const dynamic = _[method](src);
+     8	  return [compiled(data), dynamic(data)];
+     9	}
+
+--- EXPECTED ---
+{
+  "fixture": "03-esm-namespace.js",
+  "language": "javascript",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "lodash",
+      "kind": "esm_namespace",
+      "local": "_",
+      "imported": "*",
+      "typeOnly": false,
+      "line": 1,
+      "column": 12
+    }
+  ],
+  "calls": [
+    {
+      "callee": "template",
+      "receiver": "_",
+      "line": 6,
+      "column": 19
+    },
+    {
+      "callee": null,
+      "receiver": "_",
+      "line": 7,
+      "column": 18,
+      "note": "computed member property"
+    },
+    {
+      "callee": "compiled",
+      "receiver": null,
+      "line": 8,
+      "column": 10
+    },
+    {
+      "callee": "dynamic",
+      "receiver": null,
+      "line": 8,
+      "column": 26
+    }
+  ],
+  "functions": [
+    {
+      "name": "build",
+      "line": 5,
+      "column": 16,
+      "exported": true
+    }
+  ],
+  "unresolved": [
+    {
+      "kind": "computed_member",
+      "expression": "_[method](src)",
+      "line": 7,
+      "column": 18,
+      "reason": "property name is computed at runtime"
+    }
+  ]
+}
+
+--- RELEVANT AST ---
+  field="" type="import_statement" named=true bytes=0-28 text="import * as _ from \"lodash\";"
+    field="" type="import" named=false bytes=0-6 text="import"
+    field="" type="import_clause" named=true bytes=7-13 text="* as _"
+      field="" type="namespace_import" named=true bytes=7-13 text="* as _"
+        field="" type="identifier" named=true bytes=12-13 text="_"
+    field="source" type="string" named=true bytes=19-27 text="\"lodash\""
+      field="" type="string_fragment" named=true bytes=20-26 text="lodash"
+    field="" type="variable_declarator" named=true bytes=36-55 text="method = \"template\""
+      field="name" type="identifier" named=true bytes=36-42 text="method"
+      field="value" type="string" named=true bytes=45-55 text="\"template\""
+        field="" type="string_fragment" named=true bytes=46-54 text="template"
+  field="" type="export_statement" named=true bytes=58-206 text="export function build(src, data) {\n  const compiled = _.template(src);\n  const dynamic = _[method](src);\n  return [compiled(data), dynamic(data)];\n}"
+    field="declaration" type="function_declaration" named=true bytes=65-206 text="function build(src, data) {\n  const compiled = _.template(src);\n  const dynamic = _[method](src);\n  return [compiled(data), dynamic(data)];\n}"
+      field="name" type="identifier" named=true bytes=74-79 text="build"
+        field="" type="identifier" named=true bytes=80-83 text="src"
+        field="" type="identifier" named=true bytes=85-89 text="data"
+          field="" type="variable_declarator" named=true bytes=101-127 text="compiled = _.template(src)"
+            field="name" type="identifier" named=true bytes=101-109 text="compiled"
+            field="value" type="call_expression" named=true bytes=112-127 text="_.template(src)"
+              field="function" type="member_expression" named=true bytes=112-122 text="_.template"
+                field="object" type="identifier" named=true bytes=112-113 text="_"
+                field="" type="identifier" named=true bytes=123-126 text="src"
+          field="" type="variable_declarator" named=true bytes=137-161 text="dynamic = _[method](src)"
+            field="name" type="identifier" named=true bytes=137-144 text="dynamic"
+            field="value" type="call_expression" named=true bytes=147-161 text="_[method](src)"
+              field="function" type="subscript_expression" named=true bytes=147-156 text="_[method]"
+                field="object" type="identifier" named=true bytes=147-148 text="_"
+                field="index" type="identifier" named=true bytes=149-155 text="method"
+                field="" type="identifier" named=true bytes=157-160 text="src"
+            field="" type="call_expression" named=true bytes=173-187 text="compiled(data)"
+              field="function" type="identifier" named=true bytes=173-181 text="compiled"
+                field="" type="identifier" named=true bytes=182-186 text="data"
+            field="" type="call_expression" named=true bytes=189-202 text="dynamic(data)"
+              field="function" type="identifier" named=true bytes=189-196 text="dynamic"
+                field="" type="identifier" named=true bytes=197-201 text="data"
+
+============================================================
+FIXTURE: 04-cjs-require.js
+============================================================
+
+--- SOURCE ---
+     1	const _ = require("lodash");
+     2	const path = require("node:path");
+     3	
+     4	module.exports = function join(parts) {
+     5	  return _.uniq(parts).join(path.sep);
+     6	};
+
+--- EXPECTED ---
+{
+  "fixture": "04-cjs-require.js",
+  "language": "javascript",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "lodash",
+      "kind": "cjs",
+      "local": "_",
+      "imported": "*",
+      "typeOnly": false,
+      "line": 1,
+      "column": 6
+    },
+    {
+      "specifier": "node:path",
+      "kind": "cjs",
+      "local": "path",
+      "imported": "*",
+      "typeOnly": false,
+      "line": 2,
+      "column": 6
+    }
+  ],
+  "calls": [
+    {
+      "callee": "require",
+      "receiver": null,
+      "line": 1,
+      "column": 10
+    },
+    {
+      "callee": "require",
+      "receiver": null,
+      "line": 2,
+      "column": 13
+    },
+    {
+      "callee": "uniq",
+      "receiver": "_",
+      "line": 5,
+      "column": 9
+    },
+    {
+      "callee": "join",
+      "receiver": "_.uniq(parts)",
+      "line": 5,
+      "column": 9,
+      "note": "call on result of another call"
+    }
+  ],
+  "functions": [
+    {
+      "name": "join",
+      "line": 4,
+      "column": 26,
+      "exported": true
+    }
+  ],
+  "unresolved": []
+}
+
+--- RELEVANT AST ---
+    field="" type="variable_declarator" named=true bytes=6-27 text="_ = require(\"lodash\")"
+      field="name" type="identifier" named=true bytes=6-7 text="_"
+      field="value" type="call_expression" named=true bytes=10-27 text="require(\"lodash\")"
+        field="function" type="identifier" named=true bytes=10-17 text="require"
+          field="" type="string" named=true bytes=18-26 text="\"lodash\""
+            field="" type="string_fragment" named=true bytes=19-25 text="lodash"
+    field="" type="variable_declarator" named=true bytes=35-62 text="path = require(\"node:path\")"
+      field="name" type="identifier" named=true bytes=35-39 text="path"
+      field="value" type="call_expression" named=true bytes=42-62 text="require(\"node:path\")"
+        field="function" type="identifier" named=true bytes=42-49 text="require"
+          field="" type="string" named=true bytes=50-61 text="\"node:path\""
+            field="" type="string_fragment" named=true bytes=51-60 text="node:path"
+    field="" type="assignment_expression" named=true bytes=65-145 text="module.exports = function join(parts) {\n  return _.uniq(parts).join(path.sep);\n}"
+      field="left" type="member_expression" named=true bytes=65-79 text="module.exports"
+        field="object" type="identifier" named=true bytes=65-71 text="module"
+      field="right" type="function_expression" named=true bytes=82-145 text="function join(parts) {\n  return _.uniq(parts).join(path.sep);\n}"
+        field="name" type="identifier" named=true bytes=91-95 text="join"
+          field="" type="identifier" named=true bytes=96-101 text="parts"
+            field="" type="call_expression" named=true bytes=114-142 text="_.uniq(parts).join(path.sep)"
+              field="function" type="member_expression" named=true bytes=114-132 text="_.uniq(parts).join"
+                field="object" type="call_expression" named=true bytes=114-127 text="_.uniq(parts)"
+                  field="function" type="member_expression" named=true bytes=114-120 text="_.uniq"
+                    field="object" type="identifier" named=true bytes=114-115 text="_"
+                    field="" type="identifier" named=true bytes=121-126 text="parts"
+                field="" type="member_expression" named=true bytes=133-141 text="path.sep"
+                  field="object" type="identifier" named=true bytes=133-137 text="path"
+
+============================================================
+FIXTURE: 05-cjs-destructured.js
+============================================================
+
+--- SOURCE ---
+     1	const { template, merge: mergeDeep } = require("lodash");
+     2	
+     3	module.exports.apply = function apply(src, a, b) {
+     4	  return template(src)(mergeDeep(a, b));
+     5	};
+
+--- EXPECTED ---
+{
+  "fixture": "05-cjs-destructured.js",
+  "language": "javascript",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "lodash",
+      "kind": "cjs_destructured",
+      "local": "template",
+      "imported": "template",
+      "typeOnly": false,
+      "line": 1,
+      "column": 8
+    },
+    {
+      "specifier": "lodash",
+      "kind": "cjs_destructured",
+      "local": "mergeDeep",
+      "imported": "merge",
+      "typeOnly": false,
+      "line": 1,
+      "column": 25
+    }
+  ],
+  "calls": [
+    {
+      "callee": "require",
+      "receiver": null,
+      "line": 1,
+      "column": 39
+    },
+    {
+      "callee": "template",
+      "receiver": null,
+      "line": 4,
+      "column": 9
+    },
+    {
+      "callee": null,
+      "receiver": null,
+      "line": 4,
+      "column": 9,
+      "note": "immediately-invoked result"
+    },
+    {
+      "callee": "mergeDeep",
+      "receiver": null,
+      "line": 4,
+      "column": 23
+    }
+  ],
+  "functions": [
+    {
+      "name": "apply",
+      "line": 3,
+      "column": 32,
+      "exported": true
+    }
+  ],
+  "unresolved": []
+}
+
+--- RELEVANT AST ---
+    field="" type="variable_declarator" named=true bytes=6-56 text="{ template, merge: mergeDeep } = require(\"lodash\")"
+      field="name" type="object_pattern" named=true bytes=6-36 text="{ template, merge: mergeDeep }"
+        field="" type="shorthand_property_identifier_pattern" named=true bytes=8-16 text="template"
+        field="" type="pair_pattern" named=true bytes=18-34 text="merge: mergeDeep"
+          field="value" type="identifier" named=true bytes=25-34 text="mergeDeep"
+      field="value" type="call_expression" named=true bytes=39-56 text="require(\"lodash\")"
+        field="function" type="identifier" named=true bytes=39-46 text="require"
+          field="" type="string" named=true bytes=47-55 text="\"lodash\""
+            field="" type="string_fragment" named=true bytes=48-54 text="lodash"
+    field="" type="assignment_expression" named=true bytes=59-152 text="module.exports.apply = function apply(src, a, b) {\n  return template(src)(mergeDeep(a, b));\n}"
+      field="left" type="member_expression" named=true bytes=59-79 text="module.exports.apply"
+        field="object" type="member_expression" named=true bytes=59-73 text="module.exports"
+          field="object" type="identifier" named=true bytes=59-65 text="module"
+      field="right" type="function_expression" named=true bytes=82-152 text="function apply(src, a, b) {\n  return template(src)(mergeDeep(a, b));\n}"
+        field="name" type="identifier" named=true bytes=91-96 text="apply"
+          field="" type="identifier" named=true bytes=97-100 text="src"
+          field="" type="identifier" named=true bytes=102-103 text="a"
+          field="" type="identifier" named=true bytes=105-106 text="b"
+            field="" type="call_expression" named=true bytes=119-149 text="template(src)(mergeDeep(a, b))"
+              field="function" type="call_expression" named=true bytes=119-132 text="template(src)"
+                field="function" type="identifier" named=true bytes=119-127 text="template"
+                  field="" type="identifier" named=true bytes=128-131 text="src"
+                field="" type="call_expression" named=true bytes=133-148 text="mergeDeep(a, b)"
+                  field="function" type="identifier" named=true bytes=133-142 text="mergeDeep"
+                    field="" type="identifier" named=true bytes=143-144 text="a"
+                    field="" type="identifier" named=true bytes=146-147 text="b"
+
+============================================================
+FIXTURE: 07-dynamic-import.js
+============================================================
+
+--- SOURCE ---
+     1	const NAME = "lodash";
+     2	
+     3	export async function loadStatic() {
+     4	  const mod = await import("lodash");
+     5	  return mod.template;
+     6	}
+     7	
+     8	export async function loadComputed() {
+     9	  const mod = await import(NAME);
+    10	  return mod.template;
+    11	}
+
+--- EXPECTED ---
+{
+  "fixture": "07-dynamic-import.js",
+  "language": "javascript",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "lodash",
+      "kind": "dynamic",
+      "local": "mod",
+      "imported": "*",
+      "typeOnly": false,
+      "line": 4,
+      "column": 20
+    },
+    {
+      "specifier": "<computed>",
+      "kind": "dynamic",
+      "local": "mod",
+      "imported": "*",
+      "typeOnly": false,
+      "line": 9,
+      "column": 20
+    }
+  ],
+  "calls": [
+    {
+      "callee": "import",
+      "receiver": null,
+      "line": 4,
+      "column": 20
+    },
+    {
+      "callee": "import",
+      "receiver": null,
+      "line": 9,
+      "column": 20
+    }
+  ],
+  "functions": [
+    {
+      "name": "loadStatic",
+      "line": 3,
+      "column": 22,
+      "exported": true
+    },
+    {
+      "name": "loadComputed",
+      "line": 8,
+      "column": 22,
+      "exported": true
+    }
+  ],
+  "unresolved": [
+    {
+      "kind": "computed_dynamic_import",
+      "expression": "import(NAME)",
+      "line": 9,
+      "column": 20,
+      "reason": "module specifier is computed at runtime"
+    }
+  ]
+}
+
+--- RELEVANT AST ---
+    field="" type="variable_declarator" named=true bytes=6-21 text="NAME = \"lodash\""
+      field="name" type="identifier" named=true bytes=6-10 text="NAME"
+      field="value" type="string" named=true bytes=13-21 text="\"lodash\""
+        field="" type="string_fragment" named=true bytes=14-20 text="lodash"
+  field="" type="export_statement" named=true bytes=24-123 text="export async function loadStatic() {\n  const mod = await import(\"lodash\");\n  return mod.template;\n}"
+    field="declaration" type="function_declaration" named=true bytes=31-123 text="async function loadStatic() {\n  const mod = await import(\"lodash\");\n  return mod.template;\n}"
+      field="name" type="identifier" named=true bytes=46-56 text="loadStatic"
+          field="" type="variable_declarator" named=true bytes=69-97 text="mod = await import(\"lodash\")"
+            field="name" type="identifier" named=true bytes=69-72 text="mod"
+              field="" type="call_expression" named=true bytes=81-97 text="import(\"lodash\")"
+                field="function" type="import" named=true bytes=81-87 text="import"
+                  field="" type="import" named=false bytes=81-87 text="import"
+                  field="" type="string" named=true bytes=88-96 text="\"lodash\""
+                    field="" type="string_fragment" named=true bytes=89-95 text="lodash"
+          field="" type="member_expression" named=true bytes=108-120 text="mod.template"
+            field="object" type="identifier" named=true bytes=108-111 text="mod"
+  field="" type="export_statement" named=true bytes=125-222 text="export async function loadComputed() {\n  const mod = await import(NAME);\n  return mod.template;\n}"
+    field="declaration" type="function_declaration" named=true bytes=132-222 text="async function loadComputed() {\n  const mod = await import(NAME);\n  return mod.template;\n}"
+      field="name" type="identifier" named=true bytes=147-159 text="loadComputed"
+          field="" type="variable_declarator" named=true bytes=172-196 text="mod = await import(NAME)"
+            field="name" type="identifier" named=true bytes=172-175 text="mod"
+              field="" type="call_expression" named=true bytes=184-196 text="import(NAME)"
+                field="function" type="import" named=true bytes=184-190 text="import"
+                  field="" type="import" named=false bytes=184-190 text="import"
+                  field="" type="identifier" named=true bytes=191-195 text="NAME"
+          field="" type="member_expression" named=true bytes=207-219 text="mod.template"
+            field="object" type="identifier" named=true bytes=207-210 text="mod"
+
+============================================================
+FIXTURE: 09-tsx-component.tsx
+============================================================
+
+--- SOURCE ---
+     1	import * as React from "react";
+     2	import { format } from "date-fns";
+     3	
+     4	export const Stamp = ({ at }: { at: Date }) => <span>{format(at, "PP")}</span>;
+
+--- EXPECTED ---
+{
+  "fixture": "09-tsx-component.tsx",
+  "language": "tsx",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "react",
+      "kind": "esm_namespace",
+      "local": "React",
+      "imported": "*",
+      "typeOnly": false,
+      "line": 1,
+      "column": 12
+    },
+    {
+      "specifier": "date-fns",
+      "kind": "esm_named",
+      "local": "format",
+      "imported": "format",
+      "typeOnly": false,
+      "line": 2,
+      "column": 9
+    }
+  ],
+  "calls": [
+    {
+      "callee": "format",
+      "receiver": null,
+      "line": 4,
+      "column": 54
+    }
+  ],
+  "functions": [
+    {
+      "name": "Stamp",
+      "line": 4,
+      "column": 13,
+      "exported": true
+    }
+  ],
+  "unresolved": []
+}
+
+--- RELEVANT AST ---
+  field="" type="import_statement" named=true bytes=0-31 text="import * as React from \"react\";"
+    field="" type="import" named=false bytes=0-6 text="import"
+    field="" type="import_clause" named=true bytes=7-17 text="* as React"
+      field="" type="namespace_import" named=true bytes=7-17 text="* as React"
+        field="" type="identifier" named=true bytes=12-17 text="React"
+    field="source" type="string" named=true bytes=23-30 text="\"react\""
+      field="" type="string_fragment" named=true bytes=24-29 text="react"
+  field="" type="import_statement" named=true bytes=32-66 text="import { format } from \"date-fns\";"
+    field="" type="import" named=false bytes=32-38 text="import"
+    field="" type="import_clause" named=true bytes=39-49 text="{ format }"
+          field="name" type="identifier" named=true bytes=41-47 text="format"
+    field="source" type="string" named=true bytes=55-65 text="\"date-fns\""
+      field="" type="string_fragment" named=true bytes=56-64 text="date-fns"
+  field="" type="export_statement" named=true bytes=68-147 text="export const Stamp = ({ at }: { at: Date }) => <span>{format(at, \"PP\")}</span>;"
+      field="" type="variable_declarator" named=true bytes=81-146 text="Stamp = ({ at }: { at: Date }) => <span>{format(at, \"PP\")}</span>"
+        field="name" type="identifier" named=true bytes=81-86 text="Stamp"
+        field="value" type="arrow_function" named=true bytes=89-146 text="({ at }: { at: Date }) => <span>{format(at, \"PP\")}</span>"
+              field="pattern" type="object_pattern" named=true bytes=90-96 text="{ at }"
+                field="" type="shorthand_property_identifier_pattern" named=true bytes=92-94 text="at"
+              field="name" type="identifier" named=true bytes=116-120 text="span"
+              field="" type="call_expression" named=true bytes=122-138 text="format(at, \"PP\")"
+                field="function" type="identifier" named=true bytes=122-128 text="format"
+                  field="" type="identifier" named=true bytes=129-131 text="at"
+                  field="" type="string" named=true bytes=133-137 text="\"PP\""
+                    field="" type="string_fragment" named=true bytes=134-136 text="PP"
+              field="name" type="identifier" named=true bytes=141-145 text="span"
+
+============================================================
+FIXTURE: 11-invalid.js
+============================================================
+
+--- SOURCE ---
+     1	import { template } from "lodash"
+     2	
+     3	export function broken( {
+     4	  return template(
+
+--- EXPECTED ---
+{
+  "fixture": "11-invalid.js",
+  "language": "javascript",
+  "hasError": true,
+  "imports": [],
+  "calls": [],
+  "functions": [],
+  "unresolved": []
+}
+
+--- RELEVANT AST ---
+field="" type="ERROR" named=true bytes=0-80 text="import { template } from \"lodash\"\n\nexport function broken( {\n  return template(\n"
+  field="" type="import_statement" named=true bytes=0-33 text="import { template } from \"lodash\""
+    field="" type="import" named=false bytes=0-6 text="import"
+    field="" type="import_clause" named=true bytes=7-19 text="{ template }"
+          field="name" type="identifier" named=true bytes=9-17 text="template"
+    field="source" type="string" named=true bytes=25-33 text="\"lodash\""
+      field="" type="string_fragment" named=true bytes=26-32 text="lodash"
+  field="" type="ERROR" named=true bytes=35-69 text="export function broken( {\n  return"
+    field="" type="ERROR" named=true bytes=35-69 text="export function broken( {\n  return"
+      field="" type="identifier" named=true bytes=51-57 text="broken"
+      field="" type="identifier" named=true bytes=63-69 text="return"
+  field="" type="identifier" named=true bytes=70-78 text="template"

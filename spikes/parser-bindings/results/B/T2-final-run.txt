@@ -1,0 +1,22 @@
+=== Candidate B T2 Extraction ===
+2026-08-21T13:09:26+10:00
+harness=/tmp/harness-B
+querySHA256=a47429d70dcde4fcbccd760e2eae9afe6f03a8b00600b14dde36ff80575f7864
+
+PASS: 01-esm-named
+PASS: 02-esm-default-alias
+PASS: 03-esm-namespace
+PASS: 04-cjs-require
+PASS: 05-cjs-destructured
+PASS: 06-subpath
+PASS: 07-dynamic-import
+PASS: 08-type-only
+PASS: 09-tsx-component
+PASS: 10-reachability
+PASS: 11-invalid
+PASS: 12-edge
+PASS: 13-empty
+
+fixtures=13
+matches=13
+mismatches=0

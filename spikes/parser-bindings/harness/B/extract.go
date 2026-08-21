@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -45,10 +46,20 @@ func captureNode(
 	return nil
 }
 
-func nodeLocation(node *gotreesitter.Node) (int, int) {
+func nodeLocation(
+	source []byte,
+	node *gotreesitter.Node,
+) (int, int) {
 	point := node.StartPoint()
+	column := int(point.Column)
 
-	return int(point.Row) + 1, int(point.Column)
+	if point.Row == 0 &&
+		bytes.HasPrefix(source, []byte{0xef, 0xbb, 0xbf}) &&
+		column >= 3 {
+		column -= 3
+	}
+
+	return int(point.Row) + 1, column
 }
 
 func stringPointer(value string) *string {
@@ -142,6 +153,50 @@ func appendESMImports(
 		"type",
 	)
 
+	if err := appendESMNamespaceImports(
+		result,
+		statement,
+		language,
+		source,
+		specifier,
+		statementTypeOnly,
+	); err != nil {
+		return err
+	}
+
+	importClauses := collectNodesByType(
+		statement,
+		language,
+		"import_clause",
+	)
+
+	for _, importClause := range importClauses {
+		for index := 0; index < importClause.ChildCount(); index++ {
+			child := importClause.Child(index)
+			if child == nil ||
+				child.Type(language) != "identifier" {
+				continue
+			}
+
+			line, column := nodeLocation(source, child)
+
+			result.Imports = append(
+				result.Imports,
+				Import{
+					Specifier: specifier,
+					Kind:      "esm_default",
+					Local:     child.Text(source),
+					Imported:  "default",
+					TypeOnly:  statementTypeOnly,
+					Line:      line,
+					Column:    column,
+				},
+			)
+
+			break
+		}
+	}
+
 	importSpecifiers := collectNodesByType(
 		statement,
 		language,
@@ -165,7 +220,7 @@ func appendESMImports(
 			localNode = aliasNode
 		}
 
-		line, column := nodeLocation(localNode)
+		line, column := nodeLocation(source, localNode)
 
 		result.Imports = append(
 			result.Imports,
@@ -201,7 +256,7 @@ func appendDirectCall(
 		return fmt.Errorf("call match has no call.site capture")
 	}
 
-	line, column := nodeLocation(site)
+	line, column := nodeLocation(source, site)
 
 	call := Call{
 		Line:   line,
@@ -229,12 +284,13 @@ func appendDirectCall(
 func appendIIFECall(
 	result *Result,
 	site *gotreesitter.Node,
+	source []byte,
 ) error {
 	if site == nil {
 		return fmt.Errorf("IIFE match has no call.iife_site capture")
 	}
 
-	line, column := nodeLocation(site)
+	line, column := nodeLocation(source, site)
 
 	result.Calls = append(
 		result.Calls,
@@ -263,7 +319,7 @@ func appendFunction(
 		)
 	}
 
-	line, column := nodeLocation(name)
+	line, column := nodeLocation(source, name)
 
 	exported := false
 	parent := declaration.Parent()
@@ -423,6 +479,9 @@ func extractFixture(fixturePath string) (Result, error) {
 	}
 
 	result.HasError = root.HasError()
+	if result.HasError {
+		return result, nil
+	}
 
 	querySource, err := os.ReadFile("queries/usage.scm")
 	if err != nil {
@@ -458,10 +517,29 @@ func extractFixture(fixturePath string) (Result, error) {
 				source,
 			)
 
+		case captureNode(match, "require.statement") != nil:
+			err = appendRequireImports(
+				&result,
+				captureNode(match, "require.statement"),
+				captureNode(match, "require.source"),
+				language,
+				source,
+			)
+
+		case captureNode(match, "dynamic.statement") != nil:
+			err = appendDynamicImport(
+				&result,
+				captureNode(match, "dynamic.statement"),
+				captureNode(match, "dynamic.arguments"),
+				language,
+				source,
+			)
+
 		case captureNode(match, "call.iife_site") != nil:
 			err = appendIIFECall(
 				&result,
 				captureNode(match, "call.iife_site"),
+				source,
 			)
 
 		case captureNode(match, "call.site") != nil:
@@ -489,6 +567,24 @@ func extractFixture(fixturePath string) (Result, error) {
 		}
 	}
 
+	if err := appendStructuralCalls(
+		&result,
+		root,
+		language,
+		source,
+	); err != nil {
+		return Result{}, err
+	}
+
+	if err := appendAdditionalFunctions(
+		&result,
+		root,
+		language,
+		source,
+	); err != nil {
+		return Result{}, err
+	}
+
 	sortResult(&result)
 	return result, nil
 }
@@ -501,6 +597,7 @@ func runExtract(fixturePath string) error {
 
 	encoder := json.NewEncoder(os.Stdout)
 	encoder.SetIndent("", "  ")
+	encoder.SetEscapeHTML(false)
 
 	if err := encoder.Encode(result); err != nil {
 		return fmt.Errorf("encode extraction result: %w", err)
