@@ -1,0 +1,1 @@
+elapsed=0.26 maxrss_kb=17688 exit=0

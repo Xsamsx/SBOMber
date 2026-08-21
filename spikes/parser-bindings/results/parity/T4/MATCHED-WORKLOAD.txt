@@ -1,0 +1,20 @@
+=== T4 Matched S-expression Workload ===
+2026-08-21T13:19:51+10:00
+
+--- lodash ---
+Candidate A: elapsed=0.21 maxrss_kb=15052 exit=0
+ shell_exit=0
+Candidate B: elapsed=0.91 maxrss_kb=74648 exit=0
+ shell_exit=0
+
+--- deep ---
+Candidate A: elapsed=0.10 maxrss_kb=13980 exit=0
+ shell_exit=0
+Candidate B: elapsed=0.21 maxrss_kb=51036 exit=0
+ shell_exit=0
+
+--- binary ---
+Candidate A: elapsed=3.01 maxrss_kb=253168 exit=0
+ shell_exit=0
+Candidate B: elapsed=0.11 maxrss_kb=17688 exit=0
+ shell_exit=0

@@ -1,0 +1,5 @@
+fixture=corpus/micro/13-empty.js
+exit=0
+containsError=false
+elapsed=0.10 maxrss_kb=7748 exit=0
+10 results/A/T4/empty.sexp.txt

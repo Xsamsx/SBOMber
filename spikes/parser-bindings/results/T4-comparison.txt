@@ -1,0 +1,62 @@
+=== T4 Candidate Comparison ===
+2026-08-21T13:18:07+10:00
+
+--- invalid ---
+Candidate A:
+fixture=corpus/micro/11-invalid.js
+exit=0
+containsError=true
+elapsed=0.10 maxrss_kb=7672 exit=0
+184 results/A/T4/invalid.sexp.txt
+Candidate B:
+elapsed=0.12 maxrss_kb=15512 exit=0
+exit=0
+hasError=true
+
+--- empty ---
+Candidate A:
+fixture=corpus/micro/13-empty.js
+exit=0
+containsError=false
+elapsed=0.10 maxrss_kb=7748 exit=0
+10 results/A/T4/empty.sexp.txt
+Candidate B:
+elapsed=0.11 maxrss_kb=13532 exit=0
+exit=0
+hasError=false
+
+--- lodash ---
+Candidate A:
+fixture=corpus/perf/lodash.min.js
+exit=0
+containsError=false
+elapsed=0.20 maxrss_kb=15208 exit=0
+526623 results/A/T4/lodash.sexp.txt
+Candidate B:
+elapsed=0.90 maxrss_kb=75484 exit=0
+exit=0
+hasError=true
+
+--- deep ---
+Candidate A:
+fixture=corpus/perf/deep.js
+exit=0
+containsError=false
+elapsed=0.10 maxrss_kb=14072 exit=0
+215046 results/A/T4/deep.sexp.txt
+Candidate B:
+elapsed=0.50 maxrss_kb=77020 exit=0
+exit=0
+hasError=false
+
+--- binary ---
+Candidate A:
+fixture=corpus/perf/binary.js
+exit=0
+containsError=true
+elapsed=7.32 maxrss_kb=246672 exit=0
+7382018 results/A/T4/binary.sexp.txt
+Candidate B:
+elapsed=0.26 maxrss_kb=17688 exit=0
+exit=0
+hasError=true

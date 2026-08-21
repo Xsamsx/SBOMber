@@ -1,0 +1,27 @@
+=== Candidate B T4 Summary ===
+2026-08-21T13:21:37+10:00
+
+--- invalid ---
+elapsed=0.12 maxrss_kb=15512 exit=0
+exit=0
+hasError=true imports=0 calls=0 functions=0 unresolved=0
+
+--- empty ---
+elapsed=0.11 maxrss_kb=13532 exit=0
+exit=0
+hasError=false imports=0 calls=0 functions=0 unresolved=0
+
+--- lodash ---
+elapsed=0.90 maxrss_kb=75484 exit=0
+exit=0
+hasError=true imports=0 calls=0 functions=0 unresolved=0
+
+--- deep ---
+elapsed=0.50 maxrss_kb=77020 exit=0
+exit=0
+hasError=false imports=0 calls=5000 functions=0 unresolved=0
+
+--- binary ---
+elapsed=0.26 maxrss_kb=17688 exit=0
+exit=0
+hasError=true imports=0 calls=0 functions=0 unresolved=0

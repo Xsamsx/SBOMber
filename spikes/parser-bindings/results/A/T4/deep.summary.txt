@@ -1,0 +1,5 @@
+fixture=corpus/perf/deep.js
+exit=0
+containsError=false
+elapsed=0.10 maxrss_kb=14072 exit=0
+215046 results/A/T4/deep.sexp.txt

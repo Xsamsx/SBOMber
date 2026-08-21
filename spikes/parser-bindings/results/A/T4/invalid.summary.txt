@@ -1,0 +1,5 @@
+fixture=corpus/micro/11-invalid.js
+exit=0
+containsError=true
+elapsed=0.10 maxrss_kb=7672 exit=0
+184 results/A/T4/invalid.sexp.txt

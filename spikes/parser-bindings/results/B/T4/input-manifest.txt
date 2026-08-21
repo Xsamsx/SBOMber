@@ -1,0 +1,19 @@
+=== T4 Input Manifest ===
+2026-08-21T13:16:13+10:00
+
+     80 corpus/micro/11-invalid.js
+      0 corpus/micro/13-empty.js
+  73015 corpus/perf/lodash.min.js
+  15002 corpus/perf/deep.js
+1000000 corpus/perf/binary.js
+1088097 total
+
+0bfbd9b52601e8f24b3640feaac9c9ae15d5f47d7290dd51784a097f1fb8cdf8  corpus/micro/11-invalid.js
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  corpus/micro/13-empty.js
+a9705dfc47c0763380d851ab1801be6f76019f6b67e40e9b873f8b4a0603f7a9  corpus/perf/lodash.min.js
+07809e80baa4ac7d3eecb09d831321e899dbfcb060b28c43f4bcf74a8aaf0480  corpus/perf/deep.js
+3e7177ba72baf59ce03c3eec24289889d03383ee4a542e245c144edf8fc1d9e8  corpus/perf/binary.js
+
+corpus/perf/lodash.min.js: JavaScript source, ASCII text, with very long lines (4143)
+corpus/perf/deep.js:       ASCII text, with very long lines (15001)
+corpus/perf/binary.js:     data

@@ -1,0 +1,5 @@
+fixture=corpus/perf/lodash.min.js
+exit=0
+containsError=false
+elapsed=0.20 maxrss_kb=15208 exit=0
+526623 results/A/T4/lodash.sexp.txt

@@ -1,0 +1,5 @@
+fixture=corpus/perf/binary.js
+exit=0
+containsError=true
+elapsed=7.32 maxrss_kb=246672 exit=0
+7382018 results/A/T4/binary.sexp.txt
