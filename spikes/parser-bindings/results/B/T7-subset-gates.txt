@@ -1,0 +1,29 @@
+{
+  "candidate": "B",
+  "test": "T1-language-availability",
+  "fixture": "corpus/micro/01-esm-named.js",
+  "languages": [
+    {
+      "language": "javascript",
+      "instantiated": true,
+      "treeCreated": true,
+      "hasError": false,
+      "pass": true
+    },
+    {
+      "language": "typescript",
+      "instantiated": true,
+      "treeCreated": true,
+      "hasError": false,
+      "pass": true
+    },
+    {
+      "language": "tsx",
+      "instantiated": true,
+      "treeCreated": true,
+      "hasError": false,
+      "pass": true
+    }
+  ],
+  "pass": true
+}

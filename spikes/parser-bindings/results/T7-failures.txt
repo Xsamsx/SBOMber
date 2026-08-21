@@ -1,0 +1,50 @@
+
+### results/A/T7/build-darwin-amd64-cgo0.log
+github.com/tree-sitter/tree-sitter-javascript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-javascript@v0.25.0/bindings/go
+github.com/tree-sitter/tree-sitter-typescript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-typescript@v0.23.2/bindings/go
+
+### results/A/T7/build-darwin-amd64-cgo1.log
+# runtime/cgo
+cgo: C compiler "clang" not found: exec: "clang": executable file not found in $PATH
+
+### results/A/T7/build-darwin-arm64-cgo0.log
+github.com/tree-sitter/tree-sitter-javascript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-javascript@v0.25.0/bindings/go
+github.com/tree-sitter/tree-sitter-typescript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-typescript@v0.23.2/bindings/go
+
+### results/A/T7/build-darwin-arm64-cgo1.log
+# runtime/cgo
+cgo: C compiler "clang" not found: exec: "clang": executable file not found in $PATH
+
+### results/A/T7/build-linux-amd64-cgo0.log
+github.com/tree-sitter/tree-sitter-javascript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-javascript@v0.25.0/bindings/go
+github.com/tree-sitter/tree-sitter-typescript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-typescript@v0.23.2/bindings/go
+
+### results/A/T7/build-linux-arm64-cgo0.log
+github.com/tree-sitter/tree-sitter-javascript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-javascript@v0.25.0/bindings/go
+github.com/tree-sitter/tree-sitter-typescript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-typescript@v0.23.2/bindings/go
+
+### results/A/T7/build-linux-arm64-cgo1.log
+# runtime/cgo
+cgo: C compiler "aarch64-linux-gnu-gcc" not found: exec: "aarch64-linux-gnu-gcc": executable file not found in $PATH
+
+### results/A/T7/build-windows-amd64-cgo0.log
+github.com/tree-sitter/tree-sitter-typescript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-typescript@v0.23.2/bindings/go
+github.com/tree-sitter/tree-sitter-javascript/bindings/go: build constraints exclude all Go files in /home/sbomber1/go/pkg/mod/github.com/tree-sitter/tree-sitter-javascript@v0.25.0/bindings/go
+
+### results/A/T7/build-windows-amd64-cgo1.log
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+# runtime/cgo
+gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?

@@ -1,0 +1,3 @@
+//go:build grammar_subset && grammar_subset_javascript
+//go:build grammar_subset && grammar_subset_tsx
+//go:build grammar_subset && grammar_subset_typescript

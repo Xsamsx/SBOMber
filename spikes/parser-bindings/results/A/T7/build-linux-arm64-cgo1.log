@@ -1,0 +1,2 @@
+# runtime/cgo
+cgo: C compiler "aarch64-linux-gnu-gcc" not found: exec: "aarch64-linux-gnu-gcc": executable file not found in $PATH

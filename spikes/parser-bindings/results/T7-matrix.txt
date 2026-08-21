@@ -1,0 +1,28 @@
+=== T7 Packaging Matrix ===
+2026-08-21T13:26:45+10:00
+go version go1.26.0 linux/amd64
+
+=== Candidate A ===
+FAIL Candidate A linux/amd64 CGO=0
+PASS Candidate A linux/amd64 CGO=1
+FAIL Candidate A linux/arm64 CGO=0
+FAIL Candidate A linux/arm64 CGO=1
+FAIL Candidate A darwin/amd64 CGO=0
+FAIL Candidate A darwin/amd64 CGO=1
+FAIL Candidate A darwin/arm64 CGO=0
+FAIL Candidate A darwin/arm64 CGO=1
+FAIL Candidate A windows/amd64 CGO=0
+FAIL Candidate A windows/amd64 CGO=1
+
+=== Candidate B ===
+PASS Candidate B linux/amd64 CGO=0
+PASS Candidate B linux/amd64 CGO=1
+PASS Candidate B linux/arm64 CGO=0
+PASS Candidate B linux/arm64 CGO=1
+PASS Candidate B darwin/amd64 CGO=0
+PASS Candidate B darwin/amd64 CGO=1
+PASS Candidate B darwin/arm64 CGO=0
+PASS Candidate B darwin/arm64 CGO=1
+PASS Candidate B windows/amd64 CGO=0
+PASS Candidate B windows/amd64 CGO=1
+

@@ -1,0 +1,22 @@
+-rwxrwxr-x 1 sbomber1 sbomber1 5.3M Aug 21 13:26 /tmp/h-A-linux-amd64-cgo1
+/tmp/h-A-linux-amd64-cgo1: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=832e3d83a2a11d49b862971d8e7a4c6a74aa248c, for GNU/Linux 3.2.0, stripped
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:28 /tmp/h-B-darwin-amd64-cgo0
+/tmp/h-B-darwin-amd64-cgo0: Mach-O 64-bit x86_64 executable, flags:<|DYLDLINK|PIE>
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:28 /tmp/h-B-darwin-amd64-cgo1
+/tmp/h-B-darwin-amd64-cgo1: Mach-O 64-bit x86_64 executable, flags:<|DYLDLINK|PIE>
+-rwxrwxr-x 1 sbomber1 sbomber1 26M Aug 21 13:28 /tmp/h-B-darwin-arm64-cgo0
+/tmp/h-B-darwin-arm64-cgo0: Mach-O 64-bit arm64 executable, flags:<|DYLDLINK|PIE>
+-rwxrwxr-x 1 sbomber1 sbomber1 26M Aug 21 13:28 /tmp/h-B-darwin-arm64-cgo1
+/tmp/h-B-darwin-arm64-cgo1: Mach-O 64-bit arm64 executable, flags:<|DYLDLINK|PIE>
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:27 /tmp/h-B-linux-amd64-cgo0
+/tmp/h-B-linux-amd64-cgo0: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=_MVCya1xKLp0GzkEsxdy/O1M5yAJpumaGnUA-WA6K/xNR8Q_5TH4M-ggCoMJza/TFNUfV0CqumGxLnYZ4Yj, BuildID[sha1]=bce4580555737913d8f34956d9b6890656bf068d, stripped
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:27 /tmp/h-B-linux-amd64-cgo1
+/tmp/h-B-linux-amd64-cgo1: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=yZ84XN3tCag3ynGOXWCX/vOSYjXVncS4BUb5DhppW/xNR8Q_5TH4M-ggCoMJza/2C_e6B9YnFwfjQ9p6Gsg, BuildID[sha1]=0d539ea5baa1f9475425773d3e2b8a971a8b547d, stripped
+-rwxrwxr-x 1 sbomber1 sbomber1 26M Aug 21 13:27 /tmp/h-B-linux-arm64-cgo0
+/tmp/h-B-linux-arm64-cgo0: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, Go BuildID=YdSsS9VHP5yGxFgsq758/IxnghJBXsUJqno48W3Zt/XYouPnhEoFEE4XJ4e2X0/PObVGvqUcMrcaAHsWPul, BuildID[sha1]=00f63db4ce3aa848b5de6bfa858667d79c264151, stripped
+-rwxrwxr-x 1 sbomber1 sbomber1 26M Aug 21 13:27 /tmp/h-B-linux-arm64-cgo1
+/tmp/h-B-linux-arm64-cgo1: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, Go BuildID=67gcfLZ_qowRyMzy4_63/79-LYjvIpx6ln6IGtZ85/XYouPnhEoFEE4XJ4e2X0/grxbyt5drf3BhrpYM6D4, BuildID[sha1]=3f4faba4d2931bb781fcbe539e50f8525b80e375, stripped
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:28 /tmp/h-B-windows-amd64-cgo0
+/tmp/h-B-windows-amd64-cgo0: PE32+ executable for MS Windows 6.01 (console), x86-64, 8 sections
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:28 /tmp/h-B-windows-amd64-cgo1
+/tmp/h-B-windows-amd64-cgo1: PE32+ executable for MS Windows 6.01 (console), x86-64, 8 sections

@@ -1,0 +1,19 @@
+=== T7 Linux Linkage ===
+2026-08-21T13:28:50+10:00
+
+--- /tmp/h-A-linux-amd64-cgo0 ---
+not built
+
+--- /tmp/h-A-linux-amd64-cgo1 ---
+/tmp/h-A-linux-amd64-cgo1: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=832e3d83a2a11d49b862971d8e7a4c6a74aa248c, for GNU/Linux 3.2.0, stripped
+	linux-vdso.so.1 (0x000077778c9ec000)
+	libc.so.6 => /usr/lib/x86_64-linux-gnu/libc.so.6 (0x000077778c600000)
+	/lib64/ld-linux-x86-64.so.2 (0x000077778c9ee000)
+
+--- /tmp/h-B-linux-amd64-cgo0 ---
+/tmp/h-B-linux-amd64-cgo0: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=_MVCya1xKLp0GzkEsxdy/O1M5yAJpumaGnUA-WA6K/xNR8Q_5TH4M-ggCoMJza/TFNUfV0CqumGxLnYZ4Yj, BuildID[sha1]=bce4580555737913d8f34956d9b6890656bf068d, stripped
+	not a dynamic executable
+
+--- /tmp/h-B-linux-amd64-cgo1 ---
+/tmp/h-B-linux-amd64-cgo1: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=yZ84XN3tCag3ynGOXWCX/vOSYjXVncS4BUb5DhppW/xNR8Q_5TH4M-ggCoMJza/2C_e6B9YnFwfjQ9p6Gsg, BuildID[sha1]=0d539ea5baa1f9475425773d3e2b8a971a8b547d, stripped
+	not a dynamic executable

@@ -1,0 +1,15 @@
+=== Candidate B Selective-Grammar Build ===
+2026-08-21T13:35:00+10:00
+
+--- /tmp/h-B-linux-amd64-cgo0 ---
+-rwxrwxr-x 1 sbomber1 sbomber1 27M Aug 21 13:27 /tmp/h-B-linux-amd64-cgo0
+bytes=27545762
+/tmp/h-B-linux-amd64-cgo0: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=_MVCya1xKLp0GzkEsxdy/O1M5yAJpumaGnUA-WA6K/xNR8Q_5TH4M-ggCoMJza/TFNUfV0CqumGxLnYZ4Yj, BuildID[sha1]=bce4580555737913d8f34956d9b6890656bf068d, stripped
+	not a dynamic executable
+
+--- /tmp/h-B-subset ---
+-rwxrwxr-x 1 sbomber1 sbomber1 8.9M Aug 21 13:34 /tmp/h-B-subset
+bytes=9277602
+/tmp/h-B-subset: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=wMi8rKDLCai2r9OvwsZX/uR8ZDsFTrYQf3XiZsRxK/P-SMP2mgkA1twApwIVzI/VC_x_zpL2vtA86dkg4VO, BuildID[sha1]=827df2e97e32ba311f303ceeadb3cf395122aed2, stripped
+	not a dynamic executable
+
