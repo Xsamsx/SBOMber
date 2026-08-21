@@ -41,9 +41,11 @@ production adapter must verify every field used by `queries/usage.scm`.
 | Invalid, empty, deep and binary safety | No panic or timeout | No panic or timeout |
 
 The Lodash failure was not classified by `ParseStrict` as an early safety
-stop. Raising the node budget did not change it, and documented stack override
-attempts did not produce a successful parse. It is recorded as an observed
-parser/recovery incompatibility with unresolved internal cause.
+stop. Iteration, node, arena and depth budgets were below 4% utilisation, so
+those measured limits were not implicated. Stack-limit overrides did not
+produce a successful parse and instead stopped at an earlier byte position,
+while diagnostics continued to report `maxStacks=8`. Candidate B exhausted
+its viable parse stacks; the exact internal cause remains unresolved.
 
 ## Gate B — measured results
 

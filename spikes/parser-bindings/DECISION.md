@@ -18,8 +18,10 @@ evidence for SBOMber?
 | F | `github.com/t14raptor/go-fast` | Eliminated at T1 |
 
 Candidate C entered the protocol with an earlier unresolved location
-anomaly. A later supplemental smoke test reported the expected location for
-its basic call fixture, so no Candidate C location defect is claimed.
+anomaly involving direct-child traversal. A later supplemental test passed
+using tree-cursor traversal, which was not the route associated with the
+original anomaly. Direct-child behaviour was not re-tested, so the anomaly is
+neither reproduced nor refuted.
 
 Candidate C remains scope-excluded because it was not run through the complete
 fixed corpus and shared comparison protocol. Candidate B was the protocol's
@@ -129,8 +131,9 @@ Candidates E and F had already failed required language or source-mode
 availability at T1.
 
 Candidate C was not advanced through the complete fixed protocol. Its later
-supplemental basic location smoke test passed, so no confirmed location defect
-is claimed. Candidate B remained the designated strongest no-CGO survivor.
+supplemental location test passed using tree-cursor traversal. Direct-child
+traversal was not re-tested, so the earlier anomaly remains unresolved.
+Candidate B remained the designated strongest no-CGO survivor.
 
 ### Step 2 — number of survivors
 
@@ -155,14 +158,24 @@ The formal fixture evidence remains a correctness tie.
 
 T4 found that Candidate B failed to accept the valid pinned Lodash 4.17.21
 bundle. Follow-up diagnostics reported `ParseStoppedEarly() == false` and
-`no_stacks_alive`, rather than a strict early-stop safety reason. Increasing
-the node budget did not change the result, and documented GLR stack override
-attempts did not produce a successful parse.
+`no_stacks_alive`, rather than a strict early-stop safety reason.
 
-The exact internal cause remains unresolved. The finding is recorded as an
-observed parser/recovery incompatibility, not as a proven grammar defect or a
-confirmed documented safety-cap stop. It is considered as operational evidence
-under Gate C and does not change the formal correctness tie.
+At termination, the quantified safety budgets were far below their limits:
+iterations were at 2.0%, nodes at 3.0%, arena memory at 3.9%, and parse depth
+at 0.03%. Increasing the node budget did not change the result. The measured
+iteration, node, arena and depth limits were therefore not implicated.
+
+Attempts to set `GOT_GLR_MAX_STACKS` to 16, 32 and 64 did not produce a
+successful parse. Each override produced the same worse outcome: 26,593
+tokens and a root ending at byte 45,497, compared with 41,455 tokens and byte
+73,003 by default. The diagnostic still reported `maxStacks=8`, so the
+effective stack-limit behaviour remains unresolved.
+
+Candidate B exhausted its viable parse stacks and failed to accept input that
+Candidate A accepted. The finding is recorded as an observed parser/recovery
+incompatibility. It is not described as a proven grammar defect because the
+exact internal cause remains unresolved. It is considered under Gate C and
+does not change the formal correctness tie.
 
 ### Step 4 — Gate C risk
 
@@ -287,8 +300,9 @@ T8 was not run during this spike and is deferred to S5-03.
 5. Candidate A and Candidate B produce different recovery trees for invalid
    JavaScript.
 6. Candidate B failed to accept the pinned valid Lodash 4.17.21 bundle with
-   stop reason `no_stacks_alive`. The exact parser/recovery cause remains
-   unresolved.
+   stop reason `no_stacks_alive`. Its measured iteration, node, arena and depth
+   budgets were below 4% utilisation, but the exact stack-exhaustion cause
+   remains unresolved.
 7. Minified and generated files are normally excluded, but filename-based
    exclusions may be incomplete.
 8. The maximum individual source-file size is 1,000,000 bytes.
@@ -300,7 +314,8 @@ T8 was not run during this spike and is deferred to S5-03.
 12. T6 full-corpus throughput was not measured because it could not change the
     decision under the fixed rule.
 13. T8 GitHub Actions validation was not run and is deferred to S5-03.
-14. Candidate C passed a supplemental basic location smoke test but was not
+14. Candidate C passed a supplemental tree-cursor location test, but its
+    earlier direct-child traversal anomaly was not re-tested and it was not
     run through the complete fixed protocol.
 15. The selected Candidate A semantic extraction adapter still needs to be
     completed and must verify the shared query's field captures directly.

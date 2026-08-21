@@ -67,12 +67,16 @@ than silently omitted.
 A later `ParseStrict` diagnostic refined the Candidate B finding.
 
 Candidate B reported `ParseStoppedEarly() == false` and stop reason
-`no_stacks_alive`. Raising `GOT_PARSE_NODE_LIMIT_SCALE` changed the recorded
-node budget but not the outcome. Attempts to increase `GOT_GLR_MAX_STACKS`
-also did not produce a successful parse.
+`no_stacks_alive`. Iteration, node, arena and depth budgets were below 4%
+utilisation, so those measured limits were not implicated. Raising
+`GOT_PARSE_NODE_LIMIT_SCALE` changed the node budget but not the outcome.
 
-The result is therefore recorded as an observed parser/recovery
-incompatibility rather than a proven grammar defect or a confirmed documented
-safety-cap stop. The exact internal cause remains unresolved.
+Attempts to set `GOT_GLR_MAX_STACKS` to 16, 32 and 64 produced identical,
+earlier failures at byte 45,497 instead of the default byte 73,003, while the
+diagnostic continued to report `maxStacks=8`.
+
+Candidate B exhausted its viable parse stacks. The result is recorded as an
+observed parser/recovery incompatibility rather than a proven grammar defect
+because the exact cause of the stack exhaustion remains unresolved.
 
 Evidence: `results/B/T4/lodash-cause/`.

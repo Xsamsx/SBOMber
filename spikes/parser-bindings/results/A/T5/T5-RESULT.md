@@ -51,6 +51,11 @@ queries, query cursors and lookahead iterators.
 A production leak test must parse thousands of files in one process and assert
 that RSS reaches a plateau.
 
+This spike used a small 332-byte fixture. It clearly demonstrates the native
+memory cost of retaining unclosed trees, but the production leak test must
+also use realistic file sizes and a mixture of JavaScript, TypeScript and TSX
+inputs.
+
 ## Additional evidence
 
 `Parser.SetLanguage` returned nil using:
