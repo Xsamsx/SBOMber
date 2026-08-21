@@ -1,0 +1,6 @@
+=== T9 Binding-Only CGO-disabled Build ===
+2026-08-21T13:41:32+10:00
+exit=1
+
+# example.com/t9-binding-only
+./main.go:6:18: undefined: tree_sitter.NewParser

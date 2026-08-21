@@ -1,0 +1,2 @@
+# example.com/t9-binding-only
+./main.go:6:18: undefined: tree_sitter.NewParser

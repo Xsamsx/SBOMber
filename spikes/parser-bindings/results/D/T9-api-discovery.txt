@@ -1,0 +1,23 @@
+=== T9 Runtime Grammar Loading Evidence ===
+2026-08-21T16:51:43+10:00
+module=/home/sbomber1/go/pkg/mod/github.com/tree-sitter/go-tree-sitter@v0.25.0
+
+=== NewLanguage ===
+21:	Inner *C.TSLanguage
+42:func NewLanguage(ptr unsafe.Pointer) *Language {
+43:	return &Language{Inner: (*C.TSLanguage)(ptr)}
+
+=== Embedded C Runtime ===
+6:#include "lib.c" // <- This is needed to build the C library from the C source code, but cannot be included in files that have other declarations.
+8:import "C"
+
+=== Parser CGO Calls ===
+15:import "C"
+60:	return &Parser{_inner: C.ts_parser_new()}
+354:	cNewTree := C.ts_parser_parse_with_options(p._inner, cOldTree, cInput, cOptions)
+481:	cNewTree := C.ts_parser_parse_with_options(p._inner, cOldTree, cInput, cOptions)
+552:	cNewTree := C.ts_parser_parse_with_options(p._inner, cOldTree, cInput, cOptions)
+635:	cNewTree := C.ts_parser_parse_with_options(p._inner, cOldTree, cInput, cOptions)
+
+=== Dynamic Loader Search ===
+No dynamic-library or pure-Go loader found.
