@@ -59,7 +59,7 @@ func runLanguage(item languageCase) languageResult {
 		result.Error = "parser returned nil tree"
 		return result
 	}
-
+	defer tree.Release()
 	root := tree.RootNode()
 	if root == nil {
 		result.Error = "tree returned nil root node"
@@ -138,16 +138,34 @@ func runGates(fixturePath string) error {
 }
 
 func main() {
-	if len(os.Args) != 3 || os.Args[1] != "gates" {
+	if len(os.Args) != 3 {
 		fmt.Fprintln(
 			os.Stderr,
-			"usage: harness-B gates <javascript-fixture>",
+			"usage: harness-B <gates|sexp|nodes> <fixture>",
 		)
 		os.Exit(2)
 	}
 
-	if err := runGates(os.Args[2]); err != nil {
-		fmt.Fprintln(os.Stderr, "T1 FAIL:", err)
+	var err error
+
+	switch os.Args[1] {
+	case "gates":
+		err = runGates(os.Args[2])
+	case "sexp":
+		err = runSExpression(os.Args[2])
+	case "nodes":
+		err = runNodeDump(os.Args[2])
+	default:
+		fmt.Fprintf(
+			os.Stderr,
+			"unknown command %q; expected gates, sexp or nodes\n",
+			os.Args[1],
+		)
+		os.Exit(2)
+	}
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "FAIL:", err)
 		os.Exit(1)
 	}
 }

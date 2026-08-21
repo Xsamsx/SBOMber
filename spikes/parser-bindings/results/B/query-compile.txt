@@ -1,0 +1,13 @@
+=== RUN   TestUsageQueryCompilesForRequiredLanguages
+=== RUN   TestUsageQueryCompilesForRequiredLanguages/javascript
+    query_test.go:53: shared usage query compiled for javascript
+=== RUN   TestUsageQueryCompilesForRequiredLanguages/typescript
+    query_test.go:53: shared usage query compiled for typescript
+=== RUN   TestUsageQueryCompilesForRequiredLanguages/tsx
+    query_test.go:53: shared usage query compiled for tsx
+--- PASS: TestUsageQueryCompilesForRequiredLanguages (0.04s)
+    --- PASS: TestUsageQueryCompilesForRequiredLanguages/javascript (0.00s)
+    --- PASS: TestUsageQueryCompilesForRequiredLanguages/typescript (0.00s)
+    --- PASS: TestUsageQueryCompilesForRequiredLanguages/tsx (0.00s)
+PASS
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/B	0.044s

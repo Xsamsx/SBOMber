@@ -1,0 +1,6 @@
+=== RUN   TestTypeOnlyImportIsDistinguishable
+    type_only_test.go:100: first import bytes=0-44 typeOnly=true text="import type { DebouncedFunc } from \"lodash\";"
+    type_only_test.go:108: second import bytes=45-79 typeOnly=false text="import { debounce } from \"lodash\";"
+--- PASS: TestTypeOnlyImportIsDistinguishable (0.04s)
+PASS
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/B	0.041s
