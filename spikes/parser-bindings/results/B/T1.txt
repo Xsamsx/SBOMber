@@ -1,0 +1,44 @@
+=== Candidate B — T1 Language Availability ===
+2026-08-21T10:20:29+10:00
+go version go1.26.0 linux/amd64
+
+=== Candidate module ===
+github.com/odvcencio/gotreesitter v0.51.0
+
+=== CGO dependency check ===
+
+=== Binary inspection ===
+/tmp/harness-B: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=2C0DTwA9B3uRkEG545Bh/GlO08Bso14zhJTlg4gA9/2wh6Xd3hWK6VQpDsgGeC/xTFgwlC1rUHa25WuLY7G, BuildID[sha1]=9e68b7d983274e537e743b122af97562604527cc, stripped
+	not a dynamic executable
+-rwxrwxr-x 1 sbomber1 sbomber1 26M Aug 21 10:20 /tmp/harness-B
+
+=== T1 result ===
+{
+  "candidate": "B",
+  "test": "T1-language-availability",
+  "fixture": "corpus/micro/01-esm-named.js",
+  "languages": [
+    {
+      "language": "javascript",
+      "instantiated": true,
+      "treeCreated": true,
+      "hasError": false,
+      "pass": true
+    },
+    {
+      "language": "typescript",
+      "instantiated": true,
+      "treeCreated": true,
+      "hasError": false,
+      "pass": true
+    },
+    {
+      "language": "tsx",
+      "instantiated": true,
+      "treeCreated": true,
+      "hasError": false,
+      "pass": true
+    }
+  ],
+  "pass": true
+}
