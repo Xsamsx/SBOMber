@@ -1,0 +1,9 @@
+{
+  "fixture": "lodash.min.js",
+  "language": "javascript",
+  "hasError": true,
+  "imports": [],
+  "calls": [],
+  "functions": [],
+  "unresolved": []
+}

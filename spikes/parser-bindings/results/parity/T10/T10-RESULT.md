@@ -72,3 +72,18 @@ single-maintainer risks.
 
 Neither candidate is risk-free, so the final selection must also apply the
 correctness, robustness and packaging evidence.
+
+## Runtime-maturity clarification
+
+Candidate A's primary maturity advantage is the official Tree-sitter C runtime
+beneath its thin Go binding. That runtime has broad production exposure across
+editors and code-intelligence tooling. Low activity in the thin binding is
+less concerning when SBOMber pins parser and grammar versions.
+
+Candidate B's high activity, large test suite and detailed changelog are
+strengths. However, it remains a young from-scratch runtime reimplementation
+whose parity is primarily demonstrated by its own suite and whose maintenance
+is concentrated around one maintainer.
+
+For SBOMber's evidence-producing parser, mature runtime behaviour outweighs
+binding-repository activity.

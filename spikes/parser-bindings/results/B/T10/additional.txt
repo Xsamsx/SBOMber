@@ -42,7 +42,7 @@ b174fbe1e1cffafb096528de3e8361c90a0d97e7e3f1a32061aae51e983a7cfc  /home/sbomber1
       5 Lars Lehtonen <lars.lehtonen@gmail.com>
       5 Gomez <gomez@jgsw.ai>
 
-=== BREAKING REFERENCES — LAST 180 DAYS ===
+=== COMMITS MATCHING CHANGE-RELATED KEYWORDS — LAST 180 DAYS ===
 02ee8546 2026-08-11 fix(apex, parser): fix apex class_literal election parity with c oracle (#601)
 71009405 2026-08-11 add(query): Add structural query pattern validation and strict compile mode
 3849999e 2026-08-11 update(ci): Add apidiff job and update parity test regex

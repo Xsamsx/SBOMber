@@ -1,0 +1,4 @@
+github.com/malivvan/tree-sitter v0.0.1 h1:dlU+RIMzizvWygTQ6gCRKeNMrUhV7rw+uxgozE+kw1M=
+github.com/malivvan/tree-sitter v0.0.1/go.mod h1:8P6n6OqHoda94dibHUVYMGEh7cq7z/V3QhNMqdXiW5E=
+github.com/tetratelabs/wazero v1.8.2 h1:yIgLR/b2bN31bjxwXHD8a3d+BogigR952csSDdLYEv4=
+github.com/tetratelabs/wazero v1.8.2/go.mod h1:yAI0XTsMBhREkM/YDAK/zNou3GoiAce1P6+rp/wQhjs=

@@ -61,3 +61,18 @@ binary recovery time, while remaining below the 10-second safety ceiling.
 
 Files exceeding either limit must be reported as skipped or unresolved rather
 than silently omitted.
+
+## Lodash cause-isolation follow-up
+
+A later `ParseStrict` diagnostic refined the Candidate B finding.
+
+Candidate B reported `ParseStoppedEarly() == false` and stop reason
+`no_stacks_alive`. Raising `GOT_PARSE_NODE_LIMIT_SCALE` changed the recorded
+node budget but not the outcome. Attempts to increase `GOT_GLR_MAX_STACKS`
+also did not produce a successful parse.
+
+The result is therefore recorded as an observed parser/recovery
+incompatibility rather than a proven grammar defect or a confirmed documented
+safety-cap stop. The exact internal cause remains unresolved.
+
+Evidence: `results/B/T4/lodash-cause/`.

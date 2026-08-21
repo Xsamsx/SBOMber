@@ -1,0 +1,21 @@
+=== Supplemental Parser Prototype Validation ===
+2026-08-21T17:59:02+10:00
+
+--- native ---
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/native	0.006s
+
+--- harness/A ---
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/A	0.007s
+?   	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/A/t5bench	[no test files]
+
+--- harness/B ---
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/B	0.068s
+
+--- purego-gofast ---
+?   	github.com/Xsamsx/SBOMber/spikes/parser-bindings/purego	[no test files]
+
+--- purego-treesitter ---
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/purego-treesitter	0.009s
+
+--- wasm ---
+?   	github.com/Xsamsx/SBOMber/spikes/parser-bindings/wasm	[no test files]

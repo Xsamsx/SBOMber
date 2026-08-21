@@ -1,0 +1,127 @@
+=== Candidate B Safety-Limit Documentation ===
+2026-08-21T18:11:12+10:00
+module=/home/sbomber1/go/pkg/mod/github.com/odvcencio/gotreesitter@v0.51.0
+
+60-bundle for either the Go or TinyGo WebAssembly compiler.
+61-
+62-See the [WebAssembly guide](wasm/README.md) for build commands, the complete
+63-JavaScript APIs, node and match limits, and a browser example.
+64-
+65-### Strict parsing and partial trees
+66-
+67-The default parse methods preserve tree-sitter's partial-tree behavior. If a
+68:timeout, cancellation flag, token-source EOF, or parser safety limit stops
+69-the parse early, the returned tree records the stop reason and the error
+70-stays nil. This is useful for editors and diagnostics, where a partial tree
+71-still has value.
+72-
+73-Use strict methods when partial output should fail a request:
+74-
+75-```go
+76-parser.SetTimeoutMicros(50_000)
+77-
+78-tree, err := parser.ParseStrict(src)
+79-if errors.Is(err, gotreesitter.ErrParseStoppedEarly) {
+80-    fmt.Println(tree.ParseStopReason())
+81-}
+82-```
+83-
+84-Strict variants are available for full parse, incremental parse, token-source
+85-parse, factory parse, `ParseWith`, and `ParserPool`.
+86-
+--
+497-|---|---|
+498-| `full` | All scanner and lexer components present. Parser has full access to the grammar. |
+499-| `partial` | Missing external scanner. DFA lexer handles what it can; external tokens are skipped. |
+500-| `none` | Cannot parse. |
+501-
+502-`full` means the parser has every component the grammar requires. It does
+503-not guarantee error-free trees on all inputs — grammars with high GLR
+504-ambiguity may produce syntax errors on very large or deeply nested
+505:constructs, because of parser safety limits (iteration cap, stack depth cap,
+506-node count cap). These limits scale with input size. Check
+507-`tree.RootNode().HasError()` at runtime.
+508-
+509-<details>
+510-<summary>Full language list (206)</summary>
+511-
+512-`ada`, `agda`, `angular`, `apex`, `arduino`, `asm`, `astro`, `authzed`, `awk`, `bash`, `bass`, `beancount`, `bibtex`, `bicep`, `bitbake`, `blade`, `brightscript`, `c`, `c_sharp`, `caddy`, `cairo`, `capnp`, `chatito`, `circom`, `clojure`, `cmake`, `cobol`, `comment`, `commonlisp`, `cooklang`, `corn`, `cpon`, `cpp`, `crystal`, `css`, `csv`, `cuda`, `cue`, `cylc`, `d`, `dart`, `desktop`, `devicetree`, `dhall`, `diff`, `disassembly`, `djot`, `dockerfile`, `dot`, `doxygen`, `dtd`, `earthfile`, `ebnf`, `editorconfig`, `eds`, `eex`, `elisp`, `elixir`, `elm`, `elsa`, `embedded_template`, `enforce`, `erlang`, `facility`, `faust`, `fennel`, `fidl`, `firrtl`, `fish`, `foam`, `forth`, `fortran`, `fsharp`, `gdscript`, `git_config`, `git_rebase`, `gitattributes`, `gitcommit`, `gitignore`, `gleam`, `glsl`, `gn`, `go`, `godot_resource`, `gomod`, `graphql`, `groovy`, `hack`, `hare`, `haskell`, `haxe`, `hcl`, `heex`, `hlsl`, `html`, `http`, `hurl`, `hyprlang`, `ini`, `janet`, `java`, `javascript`, `jinja2`, `jq`, `jsdoc`, `json`, `json5`, `jsonnet`, `julia`, `just`, `kconfig`, `kdl`, `kotlin`, `ledger`, `less`, `linkerscript`, `liquid`, `llvm`, `lua`, `luau`, `make`, `markdown`, `markdown_inline`, `matlab`, `mermaid`, `meson`, `mojo`, `move`, `nginx`, `nickel`, `nim`, `ninja`, `nix`, `norg`, `nushell`, `objc`, `ocaml`, `odin`, `org`, `pascal`, `pem`, `perl`, `php`, `pkl`, `powershell`, `prisma`, `prolog`, `promql`, `properties`, `proto`, `pug`, `puppet`, `purescript`, `python`, `ql`, `r`, `racket`, `regex`, `rego`, `requirements`, `rescript`, `robot`, `ron`, `rst`, `ruby`, `rust`, `scala`, `scheme`, `scss`, `smithy`, `solidity`, `sparql`, `sql`, `squirrel`, `ssh_config`, `starlark`, `svelte`, `swift`, `tablegen`, `tcl`, `teal`, `templ`, `textproto`, `thrift`, `tlaplus`, `tmux`, `todotxt`, `toml`, `tsx`, `turtle`, `twig`, `typescript`, `typst`, `uxntal`, `v`, `verilog`, `vhdl`, `vimdoc`, `vue`, `wat`, `wgsl`, `wolfram`, `xml`, `yaml`, `yuck`, `zig`
+513-
+514-</details>
+515-
+516-## Query API
+517-
+518-| Feature | Status |
+519-|---|---|
+520-| Compile + execute (`NewQuery`, `Execute`, `ExecuteNode`) | supported |
+521-| Cursor streaming (`Exec`, `NextMatch`, `NextCapture`) | supported |
+522-| Structural quantifiers (`?`, `*`, `+`) | supported |
+523-| Alternation (`[...]`) | supported |
+--
+562-  **5.608320x C**. The compact candidate's lower diagnostic ratio is not
+563-  a public-parser claim. The former ~2.1x row used a straight-LR
+564-  synthetic and a different Go grammar, so it stays historical only. The
+565-  locked incremental matrix validates correctness and classifies work,
+566-  but general incremental Go/C performance has no current
+567-  publication-grade headline. Full-parse throughput varies by grammar
+568-  and corpus shape; GLR-heavy code, highly ambiguous languages, and very
+569-  large generated files remain the main performance frontier.
+570:- **GLR safety caps**: the parser enforces iteration, stack depth, and
+571-  node count limits proportional to input size. These prevent
+572-  pathological blowup on grammars with high ambiguity, but they impose
+573-  a ceiling on the maximum input complexity that parses without error.
+574-  The caps are tunable but not removable without risking unbounded
+575-  resource consumption.
+576-
+577-## Adding a language
+578-
+579-### Optional native Lean grammar
+580-
+581-The Lean 4 grammar is an opt-in package during its default-fleet graduation.
+582-It is authored with grammargen's Go domain-specific language (DSL). It does
+583-not import another tree-sitter grammar.
+584-
+585-```go
+586-import _ "github.com/odvcencio/gotreesitter/grammars/lean"
+587-```
+588-
+--
+710-GOTREESITTER_GRAMMAR_COMPACT=true        # loader compaction (default)
+711-GOTREESITTER_GRAMMAR_STRING_INTERN_LIMIT=200000
+712-GOTREESITTER_GRAMMAR_TRANSITION_INTERN_LIMIT=20000
+713-```
+714-
+715-**GLR stack cap override**:
+716-
+717-```sh
+718:GOT_GLR_MAX_STACKS=8  # overrides default GLR stack cap (default: 8)
+719-```
+720-
+721-The default is tuned for correctness. Increase it only if a grammar or
+722-workload needs more GLR alternatives to preserve parity.
+723-
+724-**Legacy benchmark compatibility only**:
+725-
+726-```sh
+727:GOT_PARSE_NODE_LIMIT_SCALE=3
+728-```
+729-
+730:`GOT_PARSE_NODE_LIMIT_SCALE` is needed only for comparisons against older
+731-truncation-prone benchmark baselines. Keep it unset on current branches.
+732-
+733-## Testing
+734-
+735-```sh
+736-bash cgo_harness/docker/run_single_grammar_parity.sh typescript
+737-```
+738-
+739-For local correctness/parity work, prefer isolated one-language Docker runs:
+740-
+741-```sh
+742-# Real-corpus parity for one grammar
+743-bash cgo_harness/docker/run_single_grammar_parity.sh typescript
+744-
+745-# Focused grammargen real-corpus lane for one language
+746-bash cgo_harness/docker/run_grammargen_focus_targets.sh --mode real-corpus --langs typescript
+747-
+748-# Focused grammargen-vs-C lane for one language

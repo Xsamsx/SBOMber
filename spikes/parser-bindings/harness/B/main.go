@@ -142,7 +142,7 @@ func runGates(fixturePath string) error {
 func printUsage() {
 	fmt.Fprintln(
 		os.Stderr,
-		"usage: harness-B <gates|sexp|nodes|captures|extract> <fixture>",
+		"usage: harness-B <gates|sexp|nodes|captures|extract|stopreason> <fixture>",
 	)
 }
 
@@ -168,6 +168,8 @@ func main() {
 		err = runCaptureDump(fixturePath)
 	case "extract":
 		err = runExtract(fixturePath)
+	case "stopreason":
+		err = runStopReason(fixturePath)
 	default:
 		fmt.Fprintf(
 			os.Stderr,

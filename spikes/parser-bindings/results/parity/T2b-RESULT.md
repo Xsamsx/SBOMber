@@ -43,3 +43,17 @@ input. Their invalid-input behaviour will be evaluated separately under T4.
 T2 extraction diffs are treated as adapter and prototype correctness checks.
 T2b structural parity, T3 locations, and Gate A representability are the
 candidate-comparison evidence.
+
+## Field-label limitation
+
+Candidate A's s-expression field labels were removed during normalisation
+because Candidate B's `SExpr()` output did not include them.
+
+T2b therefore proves parity of named-node types, nesting and parentheses. It
+does not independently prove parity of field assignments such as `function:`,
+`source:` or `object:`.
+
+Candidate A's extraction-related Gate A results are consequently labelled as
+inferred from structural parity rather than directly measured through a
+Candidate A semantic adapter. The production Candidate A adapter must verify
+the field assignments used by `queries/usage.scm`.
