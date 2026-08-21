@@ -24,6 +24,10 @@
     object: (identifier) @call.receiver
     property: (property_identifier) @call.property)) @call.site
 
+; Immediately invoked result of another call
+(call_expression
+  function: (call_expression) @call.iife_function) @call.iife_site
+
 ; Named function declarations
 (function_declaration
   name: (identifier) @function.name) @function.decl

@@ -1,0 +1,83 @@
+=== T2 FIXTURE 01 EXTRACTION CONTRACT ===
+2026-08-21T11:29:04+10:00
+
+=== SOURCE ===
+     1	import { template } from "lodash";
+     2	
+     3	export function render(data) {
+     4	  return template("<%= name %>")(data);
+     5	}
+
+=== EXPECTED JSON ===
+{
+  "fixture": "01-esm-named.js",
+  "language": "javascript",
+  "hasError": false,
+  "imports": [
+    {
+      "specifier": "lodash",
+      "kind": "esm_named",
+      "local": "template",
+      "imported": "template",
+      "typeOnly": false,
+      "line": 1,
+      "column": 9
+    }
+  ],
+  "calls": [
+    {
+      "callee": "template",
+      "receiver": null,
+      "line": 4,
+      "column": 9
+    },
+    {
+      "callee": null,
+      "receiver": null,
+      "line": 4,
+      "column": 9,
+      "note": "immediately-invoked result"
+    }
+  ],
+  "functions": [
+    {
+      "name": "render",
+      "line": 3,
+      "column": 16,
+      "exported": true
+    }
+  ],
+  "unresolved": []
+}
+
+=== QUERY CAPTURES ===
+match=1 pattern=0 captures=2
+  capture="import.statement" type="import_statement" bytes=0-34 start=0:0 end=0:34 text="import { template } from \"lodash\";"
+  capture="import.source" type="string" bytes=25-33 start=0:25 end=0:33 text="\"lodash\""
+match=2 pattern=6 captures=2
+  capture="function.decl" type="function_declaration" bytes=43-108 start=2:7 end=4:1 text="function render(data) {\n  return template(\"<%= name %>\")(data);\n}"
+  capture="function.name" type="identifier" bytes=52-58 start=2:16 end=2:22 text="render"
+match=3 pattern=5 captures=2
+  capture="call.iife_site" type="call_expression" bytes=76-105 start=3:9 end=3:38 text="template(\"<%= name %>\")(data)"
+  capture="call.iife_function" type="call_expression" bytes=76-99 start=3:9 end=3:32 text="template(\"<%= name %>\")"
+match=4 pattern=3 captures=2
+  capture="call.site" type="call_expression" bytes=76-99 start=3:9 end=3:32 text="template(\"<%= name %>\")"
+  capture="call.name" type="identifier" bytes=76-84 start=3:9 end=3:17 text="template"
+matches=4
+
+=== RELEVANT AST NODES ===
+  field="" type="import_statement" named=true bytes=0-34 text="import { template } from \"lodash\";"
+    field="" type="import_clause" named=true bytes=7-19 text="{ template }"
+      field="" type="named_imports" named=true bytes=7-19 text="{ template }"
+        field="" type="import_specifier" named=true bytes=9-17 text="template"
+          field="name" type="identifier" named=true bytes=9-17 text="template"
+    field="source" type="string" named=true bytes=25-33 text="\"lodash\""
+  field="" type="export_statement" named=true bytes=36-108 text="export function render(data) {\n  return template(\"<%= name %>\")(data);\n}"
+    field="declaration" type="function_declaration" named=true bytes=43-108 text="function render(data) {\n  return template(\"<%= name %>\")(data);\n}"
+      field="name" type="identifier" named=true bytes=52-58 text="render"
+        field="" type="identifier" named=true bytes=59-63 text="data"
+          field="" type="call_expression" named=true bytes=76-105 text="template(\"<%= name %>\")(data)"
+            field="function" type="call_expression" named=true bytes=76-99 text="template(\"<%= name %>\")"
+              field="function" type="identifier" named=true bytes=76-84 text="template"
+                field="" type="string" named=true bytes=85-98 text="\"<%= name %>\""
+              field="" type="identifier" named=true bytes=100-104 text="data"

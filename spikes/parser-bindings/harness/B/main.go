@@ -60,6 +60,7 @@ func runLanguage(item languageCase) languageResult {
 		return result
 	}
 	defer tree.Release()
+
 	root := tree.RootNode()
 	if root == nil {
 		result.Error = "tree returned nil root node"
@@ -111,6 +112,7 @@ func runGates(fixturePath string) error {
 		Candidate: "B",
 		Test:      "T1-language-availability",
 		Fixture:   fixturePath,
+		Languages: make([]languageResult, 0, len(cases)),
 		Pass:      true,
 	}
 
@@ -137,30 +139,42 @@ func runGates(fixturePath string) error {
 	return nil
 }
 
+func printUsage() {
+	fmt.Fprintln(
+		os.Stderr,
+		"usage: harness-B <gates|sexp|nodes|captures|extract> <fixture>",
+	)
+}
+
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(
-			os.Stderr,
-			"usage: harness-B <gates|sexp|nodes> <fixture>",
-		)
+		printUsage()
 		os.Exit(2)
 	}
 
+	command := os.Args[1]
+	fixturePath := os.Args[2]
+
 	var err error
 
-	switch os.Args[1] {
+	switch command {
 	case "gates":
-		err = runGates(os.Args[2])
+		err = runGates(fixturePath)
 	case "sexp":
-		err = runSExpression(os.Args[2])
+		err = runSExpression(fixturePath)
 	case "nodes":
-		err = runNodeDump(os.Args[2])
+		err = runNodeDump(fixturePath)
+	case "captures":
+		err = runCaptureDump(fixturePath)
+	case "extract":
+		err = runExtract(fixturePath)
 	default:
 		fmt.Fprintf(
 			os.Stderr,
-			"unknown command %q; expected gates, sexp or nodes\n",
-			os.Args[1],
+			"unknown command %q\n",
+			command,
 		)
+		printUsage()
 		os.Exit(2)
 	}
 

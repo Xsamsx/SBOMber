@@ -1,0 +1,10 @@
+match=1 pattern=0 captures=2
+  capture="import.statement" type="import_statement" bytes=0-34 start=0:0 end=0:34 text="import { template } from \"lodash\";"
+  capture="import.source" type="string" bytes=25-33 start=0:25 end=0:33 text="\"lodash\""
+match=2 pattern=5 captures=2
+  capture="function.decl" type="function_declaration" bytes=43-108 start=2:7 end=4:1 text="function render(data) {\n  return template(\"<%= name %>\")(data);\n}"
+  capture="function.name" type="identifier" bytes=52-58 start=2:16 end=2:22 text="render"
+match=3 pattern=3 captures=2
+  capture="call.site" type="call_expression" bytes=76-99 start=3:9 end=3:32 text="template(\"<%= name %>\")"
+  capture="call.name" type="identifier" bytes=76-84 start=3:9 end=3:17 text="template"
+matches=3

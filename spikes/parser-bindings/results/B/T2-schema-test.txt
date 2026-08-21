@@ -1,0 +1,32 @@
+=== RUN   TestResultSchemaAcceptsAllGroundTruth
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/01-esm-named.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/02-esm-default-alias.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/03-esm-namespace.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/04-cjs-require.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/05-cjs-destructured.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/06-subpath.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/07-dynamic-import.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/08-type-only.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/09-tsx-component.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/10-reachability.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/11-invalid.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/12-edge.json
+=== RUN   TestResultSchemaAcceptsAllGroundTruth/13-empty.json
+=== NAME  TestResultSchemaAcceptsAllGroundTruth
+    schema_test.go:89: ground truth totals: imports=19 calls=30 functions=12 unresolved=2
+--- PASS: TestResultSchemaAcceptsAllGroundTruth (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/01-esm-named.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/02-esm-default-alias.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/03-esm-namespace.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/04-cjs-require.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/05-cjs-destructured.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/06-subpath.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/07-dynamic-import.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/08-type-only.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/09-tsx-component.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/10-reachability.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/11-invalid.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/12-edge.json (0.00s)
+    --- PASS: TestResultSchemaAcceptsAllGroundTruth/13-empty.json (0.00s)
+PASS
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/B	0.010s

@@ -1,0 +1,240 @@
+=== T2 Expected Schema Audit ===
+2026-08-21T11:04:39+10:00
+jq-1.8.1
+
+=== Top-level fields ===
+[
+  "calls",
+  "fixture",
+  "functions",
+  "hasError",
+  "imports",
+  "language",
+  "unresolved"
+]
+
+=== imports fields and JSON types ===
+[
+  {
+    "field": "column",
+    "type": "number"
+  },
+  {
+    "field": "imported",
+    "type": "string"
+  },
+  {
+    "field": "kind",
+    "type": "string"
+  },
+  {
+    "field": "line",
+    "type": "number"
+  },
+  {
+    "field": "local",
+    "type": "string"
+  },
+  {
+    "field": "specifier",
+    "type": "string"
+  },
+  {
+    "field": "typeOnly",
+    "type": "boolean"
+  }
+]
+
+=== calls fields and JSON types ===
+[
+  {
+    "field": "callee",
+    "type": "null"
+  },
+  {
+    "field": "callee",
+    "type": "string"
+  },
+  {
+    "field": "column",
+    "type": "number"
+  },
+  {
+    "field": "line",
+    "type": "number"
+  },
+  {
+    "field": "note",
+    "type": "string"
+  },
+  {
+    "field": "receiver",
+    "type": "null"
+  },
+  {
+    "field": "receiver",
+    "type": "string"
+  }
+]
+
+=== functions fields and JSON types ===
+[
+  {
+    "field": "column",
+    "type": "number"
+  },
+  {
+    "field": "exported",
+    "type": "boolean"
+  },
+  {
+    "field": "line",
+    "type": "number"
+  },
+  {
+    "field": "name",
+    "type": "string"
+  }
+]
+
+=== unresolved fields and JSON types ===
+[
+  {
+    "field": "column",
+    "type": "number"
+  },
+  {
+    "field": "expression",
+    "type": "string"
+  },
+  {
+    "field": "kind",
+    "type": "string"
+  },
+  {
+    "field": "line",
+    "type": "number"
+  },
+  {
+    "field": "reason",
+    "type": "string"
+  }
+]
+
+=== Expected totals ===
+{
+  "fixtures": 13,
+  "imports": 19,
+  "calls": 30,
+  "functions": 12,
+  "unresolved": 2
+}
+
+=== Fixture languages and expected errors ===
+[
+  {
+    "fixture": "01-esm-named.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "02-esm-default-alias.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "03-esm-namespace.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "04-cjs-require.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "05-cjs-destructured.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "06-subpath.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "07-dynamic-import.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "08-type-only.ts",
+    "language": "typescript",
+    "hasError": false
+  },
+  {
+    "fixture": "09-tsx-component.tsx",
+    "language": "tsx",
+    "hasError": false
+  },
+  {
+    "fixture": "10-reachability.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "11-invalid.js",
+    "language": "javascript",
+    "hasError": true
+  },
+  {
+    "fixture": "12-edge.js",
+    "language": "javascript",
+    "hasError": false
+  },
+  {
+    "fixture": "13-empty.js",
+    "language": "javascript",
+    "hasError": false
+  }
+]
+
+=== Relevant conventions ===
+8:- Lines are 1-based.
+9:- Columns are 0-based UTF-8 byte columns.
+10:- `startByte` is inclusive.
+11:- `endByte` is exclusive.
+12:- Byte offsets refer to the original file bytes.
+13:- CRLF is two bytes in byte-offset calculations but represents one line ending.
+14:- The UTF-8 BOM in `12-edge.js` is included in byte offsets.
+15:- The BOM is not treated as a visible source-code column. Therefore, columns
+16:  on the first line of `12-edge.js` are normalised by subtracting the
+17:  three-byte BOM.
+18:- Non-ASCII characters count according to their UTF-8 byte length.
+31:  recorded in `unresolved`.
+32:- A TypeScript `import type` is retained with `typeOnly: true`.
+33:- Type-only imports do not create runtime-call evidence.
+35:## Call locations
+37:- A call location is the beginning of the complete call expression.
+38:- All syntactic call expressions are recorded, including nested calls.
+39:- An immediately invoked result is a separate call expression.
+40:- `require(...)` is both a CommonJS import and a call expression.
+41:- `import(...)` is both a dynamic-import observation and a call expression.
+42:- For `object.property(...)`, `receiver` is the object and `callee` is the
+44:- For a simple `name(...)` call, `receiver` is null and `callee` is the name.
+45:- For a computed member call such as `_[method](...)`, the receiver is known
+46:  but the property is unresolved.
+47:- Calls through the result of another call are retained with a note explaining
+48:  that the callee is an immediately invoked or chained result.
+56:- Anonymous callback functions are not added to the named-functions list.
+59:## Unresolved constructs
+61:The following formal corpus cases are unresolved:
+63:1. Computed member call `_[method](src)` in `03-esm-namespace.js`.
+68:An immediately invoked result is represented as a call with a null callee and
+69:a note. It is not classified as an unresolved dependency construct.
+85:Every output list is sorted deterministically by:
+87:1. line;
+88:2. column;
+89:3. when two call expressions begin at the same location, the inner call is
+90:   listed before the outer call;
+91:4. name, imported symbol, callee or unresolved expression as applicable.
