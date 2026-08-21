@@ -1,0 +1,60 @@
+=== Candidate B T3 Traversal API ===
+2026-08-21T12:18:59+10:00
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) Child(i int) *Node
+    Child returns the i-th child, or nil if i is out of range.
+
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func (n *Node) NamedChild(i int) *Node
+    NamedChild returns the i-th named child (skipping anonymous children),
+    or nil if i is out of range.
+
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+func NewTreeCursor(node *Node, tree *Tree) *TreeCursor
+    NewTreeCursor creates a cursor starting at the given node. The optional tree
+    reference enables field name resolution and text extraction.
+
+
+package gotreesitter // import "github.com/odvcencio/gotreesitter"
+
+type TreeCursor struct {
+	// Has unexported fields.
+}
+    TreeCursor provides stateful, O(1) tree navigation. It maintains a stack
+    of (node, childIndex) frames enabling efficient parent, child, and sibling
+    movement without scanning.
+
+    The cursor holds pointers to Nodes. If the underlying Tree is released,
+    edited, or replaced via incremental reparse, the cursor should be recreated.
+
+func NewTreeCursor(node *Node, tree *Tree) *TreeCursor
+func NewTreeCursorFromTree(tree *Tree) *TreeCursor
+func (c *TreeCursor) Copy() *TreeCursor
+func (c *TreeCursor) CurrentFieldID() FieldID
+func (c *TreeCursor) CurrentFieldName() string
+func (c *TreeCursor) CurrentNode() *Node
+func (c *TreeCursor) CurrentNodeIsNamed() bool
+func (c *TreeCursor) CurrentNodeText() string
+func (c *TreeCursor) CurrentNodeType() string
+func (c *TreeCursor) Depth() int
+func (c *TreeCursor) GotoChildByFieldID(fid FieldID) bool
+func (c *TreeCursor) GotoChildByFieldName(name string) bool
+func (c *TreeCursor) GotoFirstChild() bool
+func (c *TreeCursor) GotoFirstChildForByte(targetByte uint32) int64
+func (c *TreeCursor) GotoFirstChildForPoint(targetPoint Point) int64
+func (c *TreeCursor) GotoFirstNamedChild() bool
+func (c *TreeCursor) GotoLastChild() bool
+func (c *TreeCursor) GotoLastNamedChild() bool
+func (c *TreeCursor) GotoNextNamedSibling() bool
+func (c *TreeCursor) GotoNextSibling() bool
+func (c *TreeCursor) GotoParent() bool
+func (c *TreeCursor) GotoPrevNamedSibling() bool
+func (c *TreeCursor) GotoPrevSibling() bool
+func (c *TreeCursor) Reset(node *Node)
+func (c *TreeCursor) ResetTree(tree *Tree)

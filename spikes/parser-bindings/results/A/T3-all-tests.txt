@@ -1,0 +1,21 @@
+=== RUN   TestEdgeFixtureLocations
+=== RUN   TestEdgeFixtureLocations/imported_local_binding
+    edge_test.go:185: raw={StartByte:12 EndByte:20 Line:1 Column:12 EndLine:1 EndColumn:20} normalised={StartByte:12 EndByte:20 Line:1 Column:9 EndLine:1 EndColumn:17}
+=== RUN   TestEdgeFixtureLocations/UTF-8_declared_identifier
+    edge_test.go:185: raw={StartByte:45 EndByte:50 Line:2 Column:6 EndLine:2 EndColumn:11} normalised={StartByte:45 EndByte:50 Line:2 Column:6 EndLine:2 EndColumn:11}
+=== RUN   TestEdgeFixtureLocations/call_after_UTF-8_identifier
+    edge_test.go:185: raw={StartByte:53 EndByte:66 Line:2 Column:14 EndLine:2 EndColumn:27} normalised={StartByte:53 EndByte:66 Line:2 Column:14 EndLine:2 EndColumn:27}
+=== RUN   TestEdgeFixtureLocations/default_export_identifier
+    edge_test.go:185: raw={StartByte:84 EndByte:89 Line:3 Column:15 EndLine:3 EndColumn:20} normalised={StartByte:84 EndByte:89 Line:3 Column:15 EndLine:3 EndColumn:20}
+--- PASS: TestEdgeFixtureLocations (0.00s)
+    --- PASS: TestEdgeFixtureLocations/imported_local_binding (0.00s)
+    --- PASS: TestEdgeFixtureLocations/UTF-8_declared_identifier (0.00s)
+    --- PASS: TestEdgeFixtureLocations/call_after_UTF-8_identifier (0.00s)
+    --- PASS: TestEdgeFixtureLocations/default_export_identifier (0.00s)
+=== RUN   TestTraversalAgreement
+    location_test.go:213: Child: bytes=42-62 line=2 column=13 endLine=2 endColumn=33
+    location_test.go:213: NamedChild: bytes=42-62 line=2 column=13 endLine=2 endColumn=33
+    location_test.go:213: TreeCursor: bytes=42-62 line=2 column=13 endLine=2 endColumn=33
+--- PASS: TestTraversalAgreement (0.00s)
+PASS
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/A	0.008s

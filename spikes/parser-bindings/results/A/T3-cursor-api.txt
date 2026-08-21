@@ -1,0 +1,57 @@
+=== Candidate A T3 Traversal API ===
+2026-08-21T12:14:58+10:00
+
+package tree_sitter // import "github.com/tree-sitter/go-tree-sitter"
+
+func (n *Node) Child(i uint) *Node
+    Get the node's child at the given index, where zero represents the first
+    child.
+
+    This method is fairly fast, but its cost is technically log(i),
+    so if you might be iterating over a long list of children, you should use
+    Node.Children instead.
+
+
+package tree_sitter // import "github.com/tree-sitter/go-tree-sitter"
+
+func (n *Node) NamedChild(i uint) *Node
+    Get this node's *named* child at the given index.
+
+    See also Node.IsNamed. This method is fairly fast, but its cost is
+    technically log(i), so if you might be iterating over a long list of
+    children, you should use Node.NamedChildren instead.
+
+
+package tree_sitter // import "github.com/tree-sitter/go-tree-sitter"
+
+func (n *Node) Walk() *TreeCursor
+    Create a new TreeCursor starting from this node.
+
+    Note that the given node is considered the root of the cursor, and the
+    cursor cannot walk outside this node.
+
+
+package tree_sitter // import "github.com/tree-sitter/go-tree-sitter"
+
+type TreeCursor struct {
+	// Has unexported fields.
+}
+    A stateful object for walking a syntax Tree efficiently.
+
+func (tc *TreeCursor) Close()
+func (tc *TreeCursor) Copy() *TreeCursor
+func (tc *TreeCursor) Depth() uint32
+func (tc *TreeCursor) DescendantIndex() uint32
+func (tc *TreeCursor) FieldId() uint16
+func (tc *TreeCursor) FieldName() string
+func (tc *TreeCursor) GotoDescendant(descendantIndex uint32)
+func (tc *TreeCursor) GotoFirstChild() bool
+func (tc *TreeCursor) GotoFirstChildForByte(byteIndex uint32) *uint
+func (tc *TreeCursor) GotoFirstChildForPoint(point Point) *uint
+func (tc *TreeCursor) GotoLastChild() bool
+func (tc *TreeCursor) GotoNextSibling() bool
+func (tc *TreeCursor) GotoParent() bool
+func (tc *TreeCursor) GotoPreviousSibling() bool
+func (tc *TreeCursor) Node() *Node
+func (tc *TreeCursor) Reset(node Node)
+func (tc *TreeCursor) ResetTo(cursor *TreeCursor)

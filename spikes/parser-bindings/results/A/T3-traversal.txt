@@ -1,0 +1,7 @@
+=== RUN   TestTraversalAgreement
+    location_test.go:213: Child: bytes=42-62 line=2 column=13 endLine=2 endColumn=33
+    location_test.go:213: NamedChild: bytes=42-62 line=2 column=13 endLine=2 endColumn=33
+    location_test.go:213: TreeCursor: bytes=42-62 line=2 column=13 endLine=2 endColumn=33
+--- PASS: TestTraversalAgreement (0.00s)
+PASS
+ok  	github.com/Xsamsx/SBOMber/spikes/parser-bindings/harness/A	0.008s
