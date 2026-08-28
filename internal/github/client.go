@@ -247,7 +247,7 @@ func (c *Client) GetContributors(owner, repo string) (*ContributorStats, error) 
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	c.updateRateLimit(resp.Header)
 
@@ -304,7 +304,9 @@ func extractLastPage(linkHeader string) int {
 			}
 			pageStr := part[start : start+end]
 			var page int
-			fmt.Sscanf(pageStr, "%d", &page)
+			if _, err := fmt.Sscanf(pageStr, "%d", &page); err != nil {
+				return 0
+			}
 			return page
 		}
 	}
@@ -362,11 +364,12 @@ func (c *Client) GetHealthMetrics(owner, repo string) (*HealthMetrics, error) {
 func calculateRiskLevel(m *HealthMetrics) string {
 	score := 0
 
-	if m.CommitFrequency == "abandoned" {
+	switch m.CommitFrequency {
+	case "abandoned":
 		score += 3
-	} else if m.CommitFrequency == "inactive" {
+	case "inactive":
 		score += 2
-	} else if m.CommitFrequency == "moderate" {
+	case "moderate":
 		score += 1
 	}
 
@@ -413,7 +416,7 @@ func (c *Client) doRequest(method, endpoint string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	c.updateRateLimit(resp.Header)
 
@@ -430,7 +433,7 @@ func (c *Client) doRequest(method, endpoint string) ([]byte, error) {
 			if err2 != nil {
 				return nil, fmt.Errorf("authentication failed and unauthenticated retry failed: %w", err2)
 			}
-			defer resp2.Body.Close()
+			defer func() { _ = resp2.Body.Close() }()
 			c.updateRateLimit(resp2.Header)
 			if resp2.StatusCode == 200 {
 				return io.ReadAll(resp2.Body)
