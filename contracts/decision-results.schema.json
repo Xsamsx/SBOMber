@@ -7,7 +7,7 @@
   "required": ["schemaVersion", "scanId", "decisions"],
   "additionalProperties": false,
   "properties": {
-    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "schemaVersion": { "type": "string", "const": "1.1.0" },
     "scanId": { "type": "string", "description": "Matches canonical-scan.json." },
     "distribution": {
       "type": "object",
@@ -114,8 +114,8 @@
             "properties": {
               "statement": {
                 "type": "string",
-                "enum": ["affected", "under_investigation", "not_affected", "omit"],
-                "description": "affected requires ALL THREE: affected installed version, reliable localisation, direct call evidence. Anything weaker is under_investigation. omit for unsupported — omitted from VEX but shown in the HTML report. not_affected only where deterministically or manually proven, outside the automated pipeline."
+                "enum": ["affected", "under_investigation", "in_triage", "not_affected", "omit"],
+                "description": "Investigation vocabulary is format-aware: under_investigation for OpenVEX or in_triage for CycloneDX VEX. validate.py checks the selected VEX decision record and rejects mixed vocabularies. affected requires ALL THREE: affected installed version, reliable localisation, direct call evidence. omit is for unsupported findings. not_affected is allowed only where deterministically or manually proven, outside the automated pipeline."
               },
               "actionStatement": {
                 "type": "string",

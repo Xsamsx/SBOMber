@@ -279,12 +279,59 @@ def validate_localisation(d, canon):
 
 BANNED = ["not affected", "is safe", "no risk", "false positive"]
 
+VEX_INVESTIGATION_STATES = {
+    "openvex": "under_investigation",
+    "cyclonedx": "in_triage",
+}
 
-def validate_decisions(d, canon, usage, loc):
+
+def load_vex_policy(path):
+    with open(path) as f:
+        policy = json.load(f)
+
+    fmt = policy.get("format")
+    state = policy.get("investigationState")
+    expected = VEX_INVESTIGATION_STATES.get(fmt)
+
+    if expected is None:
+        raise ValueError(
+            f"unsupported VEX format {fmt!r}; expected one of "
+            f"{sorted(VEX_INVESTIGATION_STATES)}"
+        )
+
+    if state != expected:
+        raise ValueError(
+            f"VEX decision record says format {fmt!r} but investigationState "
+            f"is {state!r}; expected {expected!r}"
+        )
+
+    return policy
+
+
+def validate_decisions(d, canon, usage, loc, vex_policy):
     c = "decision-results"
     check(c, "scanId matches", d["scanId"] == canon["scanId"],
           f"decision-results scanId {d['scanId']} != canonical-scan {canon['scanId']}")
     counts = {"usage_detected": 0, "no_usage_detected": 0, "unknown": 0, "unsupported": 0}
+
+    expected_investigation_state = vex_policy["investigationState"]
+    investigation_tokens = {
+        dec.get("vexMapping", {}).get("statement")
+        for dec in d["decisions"]
+        if dec.get("vexMapping", {}).get("statement")
+        in set(VEX_INVESTIGATION_STATES.values())
+    }
+
+    check(c, "VEX vocabularies are not mixed",
+          len(investigation_tokens) <= 1,
+          f"decision-results mixes investigation vocabularies: "
+          f"{sorted(investigation_tokens)}")
+
+    wrong_tokens = investigation_tokens - {expected_investigation_state}
+    check(c, "VEX vocabulary matches selected format",
+          not wrong_tokens,
+          f"selected format {vex_policy['format']} requires "
+          f"{expected_investigation_state}, found {sorted(wrong_tokens)}")
 
     occ_by_finding = {}
     for f_id in canon["findingIds"]:
@@ -320,8 +367,11 @@ def validate_decisions(d, canon, usage, loc):
             check(c, "no automated not_affected", bool(vex.get("manuallyReviewedBy")),
                   f"{fid} asserts not_affected with no named manual reviewer")
         if dec["state"] == "no_usage_detected":
-            check(c, "no_usage_detected maps to under_investigation", st == "under_investigation",
-                  f"{fid} is no_usage_detected but maps to {st}")
+            check(c, "no_usage_detected maps to selected investigation state",
+                  st == expected_investigation_state,
+                  f"{fid} is no_usage_detected but maps to {st}; "
+                  f"selected {vex_policy['format']} requires "
+                  f"{expected_investigation_state}")
         if dec["state"] == "unknown":
             check(c, "unknown cannot assert", st not in ("affected", "not_affected"),
                   f"{fid} is unknown but asserts {st}")
@@ -364,8 +414,27 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default=str(HERE / "fixtures"),
                     help="directory holding the four JSON files")
+    ap.add_argument("--vex-decision",
+                    help="path to the machine-readable VEX decision record")
     args = ap.parse_args()
     base = Path(args.dir)
+
+    if args.vex_decision:
+        vex_decision_path = Path(args.vex_decision)
+    else:
+        vex_decision_path = base / "vex-decision.json"
+        if not vex_decision_path.exists():
+            vex_decision_path = base / "vex-decision.sample.json"
+
+    if not vex_decision_path.exists():
+        print(f"missing VEX decision record: {vex_decision_path}", file=sys.stderr)
+        sys.exit(2)
+
+    try:
+        vex_policy = load_vex_policy(vex_decision_path)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        print(f"invalid VEX decision record: {exc}", file=sys.stderr)
+        sys.exit(2)
 
     docs = {}
     for name, schema_file in CONTRACTS:
@@ -387,7 +456,9 @@ def main():
     canon["_findings"] = docs["canonical-scan"]["findings"]
     usage = validate_usage_graph(docs["usage-graph"], canon)
     loc = validate_localisation(docs["localisation"], canon)
-    validate_decisions(docs["decision-results"], canon, usage, loc)
+    validate_decisions(
+        docs["decision-results"], canon, usage, loc, vex_policy
+    )
 
     if not HAVE_JSONSCHEMA:
         print("note: jsonschema not installed - invariant checks only, no schema conformance\n")

@@ -1,6 +1,6 @@
 # SBOMber contracts
 
-**Schema versions: `canonical-scan` 1.0.0 · `usage-graph` 1.2.0 · `localisation` 1.0.0 · `decision-results` 1.0.0**
+**Schema versions: `canonical-scan` 1.0.0 · `usage-graph` 1.2.0 · `localisation` 1.0.0 · `decision-results` 1.1.0**
 
 Four JSON contracts. Each component reads and writes **files**, never another component's running code — that is what lets four people build in parallel and integrate in Sprint 5 instead of queueing behind each other.
 
@@ -87,7 +87,7 @@ Schema conformance is the easy half. These are the rules a JSON Schema cannot ex
 
 **Decision and VEX (R3, R5)**
 - **`not_affected` cannot be emitted without a named manual reviewer.** Automated suppression is forbidden
-- `no_usage_detected` maps to `under_investigation`, never `not_affected`
+- `no_usage_detected` maps to the selected VEX investigation state: OpenVEX uses `under_investigation`; CycloneDX VEX uses `in_triage`. It never maps automatically to `not_affected`
 - `unknown` cannot assert `affected` or `not_affected`
 - `affected` requires reliable localisation, matched symbols, and an action statement — all three
 - Localisation `unknown` cannot produce `no_usage_detected`; it produces `unknown`
@@ -134,6 +134,6 @@ contracts:
 	python3 contracts/validate.py
 ```
 
-The validator runs 165 invariant checks over the four fixtures. Fifteen deliberate regressions — a `reachable` call site with no path, an occurrence missing from both arrays, a negative verdict on an unanalysed occurrence, a per-observation path counter — are each caught by a named rule.
+The validator runs 167 invariant checks over the four fixtures. Fifteen deliberate regressions — a `reachable` call site with no path, an occurrence missing from both arrays, a negative verdict on an unanalysed occurrence, a per-observation path counter — are each caught by a named rule.
 
 Run it on every pull request. Run it against real tool output before every demo.
