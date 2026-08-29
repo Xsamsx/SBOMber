@@ -91,7 +91,7 @@ func runSExpression(fixturePath string) error {
 func printUsage() {
 	fmt.Fprintln(
 		os.Stderr,
-		"usage: harness-A sexp <fixture>",
+		"usage: harness-A <sexp|extract> <fixture>",
 	)
 }
 
@@ -101,7 +101,14 @@ func main() {
 		os.Exit(2)
 	}
 
-	if os.Args[1] != "sexp" {
+	var err error
+
+	switch os.Args[1] {
+	case "sexp":
+		err = runSExpression(os.Args[2])
+	case "extract":
+		err = runExtract(os.Args[2])
+	default:
 		fmt.Fprintf(
 			os.Stderr,
 			"unknown command %q\n",
@@ -111,7 +118,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	if err := runSExpression(os.Args[2]); err != nil {
+	if err != nil {
 		fmt.Fprintln(os.Stderr, "FAIL:", err)
 		os.Exit(1)
 	}
