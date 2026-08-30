@@ -7,6 +7,7 @@
   "required": [
     "schemaVersion",
     "scanId",
+    "analysis",
     "analyser",
     "coverage",
     "observations",
@@ -21,6 +22,55 @@
     "scanId": {
       "type": "string",
       "description": "Matches canonical-scan.json."
+    },
+
+    "analysis": {
+      "type": "object",
+      "description": "Overall Component 2 analysis outcome. Prevents an empty unsupported, failed or partial analysis from being mistaken for completed analysis with no usage.",
+      "required": ["status", "ecosystem"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["complete", "partial", "unsupported", "failed"]
+        },
+        "ecosystem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "analyzerId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required for complete and partial analysis."
+        },
+        "reasonCode": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required for unsupported and failed analysis."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["complete", "partial"] }
+            }
+          },
+          "then": {
+            "required": ["analyzerId"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["unsupported", "failed"] }
+            }
+          },
+          "then": {
+            "required": ["reasonCode"]
+          }
+        }
+      ]
     },
 
     "analyser": {
