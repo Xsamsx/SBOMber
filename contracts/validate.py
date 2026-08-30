@@ -113,6 +113,18 @@ def validate_usage_graph(d, canon):
     c = "usage-graph"
     entry_ids = {e["entryPointId"] for e in d.get("entryPoints", [])}
     cov = d["coverage"]
+    analysis = d["analysis"]
+    analysis_status = analysis["status"]
+
+    check(c, "complete or partial analysis names analyzer",
+          analysis_status not in ("complete", "partial")
+          or bool(analysis.get("analyzerId")),
+          f"analysis status {analysis_status} has no analyzerId")
+
+    check(c, "unsupported or failed analysis states reason",
+          analysis_status not in ("unsupported", "failed")
+          or bool(analysis.get("reasonCode")),
+          f"analysis status {analysis_status} has no reasonCode")
 
     check(c, "file counts sum",
           cov["filesDiscovered"] == cov["filesParsed"] + cov["filesParsedWithErrors"]
@@ -240,7 +252,8 @@ def validate_usage_graph(d, canon):
     return {"observationIds": obs_ids,
             "negativeEligible": {uid for uid, u in unan.items()
                                  if u["reason"] == "not_imported_by_analysed_source"} | observed_occurrences,
-            "unanalysed": unan}
+            "unanalysed": unan,
+            "analysisStatus": analysis_status}
 
 
 # ------------------------------------------------------------------ localisation
@@ -337,10 +350,22 @@ def validate_decisions(d, canon, usage, loc, vex_policy):
     for f_id in canon["findingIds"]:
         occ_by_finding[f_id] = set()
 
+    usage_status = usage["analysisStatus"]
+
     for dec in d["decisions"]:
         fid = dec["findingId"]
         check(c, "finding known", fid in canon["findingIds"], f"{fid} not in canonical-scan")
         counts[dec["state"]] = counts.get(dec["state"], 0) + 1
+
+        if usage_status == "unsupported":
+            check(c, "analysis-level unsupported maps to finding-level unsupported",
+                  dec["state"] == "unsupported",
+                  f"{fid} has state {dec['state']} while Component 2 analysis is unsupported")
+
+        if usage_status in ("partial", "failed"):
+            check(c, "incomplete analysis cannot produce negative evidence",
+                  dec["state"] != "no_usage_detected",
+                  f"{fid} is no_usage_detected while Component 2 analysis is {usage_status}")
 
         for oid in dec["basedOn"].get("usageObservationIds", []):
             check(c, "observation known", oid in usage["observationIds"],
