@@ -55,6 +55,7 @@ The root output contains:
 
 - `schemaVersion`;
 - `scanId`;
+- `analysis`;
 - `analyser`;
 - `entryPoints`;
 - `coverage`;
@@ -126,15 +127,18 @@ Component 4 to change its input contract.
 - Candidate B's extraction adapter reproduced all 13 expected parser fixtures.
 - CGO is required for Candidate A.
 
-### Not yet claimed complete
+### Current implementation boundary
 
-- Candidate A's semantic extraction adapter.
-- Candidate A 13/13 semantic extraction parity.
-- Production usage-graph generation.
-- Production level-3 reachability implementation.
+Candidate A's semantic extraction adapter has reproduced the 13 labelled
+parser fixtures exactly.
 
-Candidate A remains the selected binding, but its field assignments must be
-verified while implementing the semantic adapter.
+The following are still not claimed complete by this architecture document:
+
+- production usage-graph generation;
+- production level-3 reachability implementation.
+
+Candidate A remains the selected binding. Its parser field assignments were
+verified before the production adapter work.
 
 
 ## 5. Parser decision and packaging
@@ -314,7 +318,7 @@ There is deliberately no `not_reachable` result.
 
 ## 10. Entry points and reachability boundary
 
-The committed reachability implementation is deliberately narrow.
+The committed reachability design and analysis boundary are deliberately narrow.
 
 The public entry-point kinds are:
 
