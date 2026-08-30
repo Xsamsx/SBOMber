@@ -32,6 +32,17 @@ type StateInputs struct {
 // Verdict is the result of running the state guard: a state plus the
 // specific reasons it was chosen, so a justification can be built from real
 // inputs instead of a template (see justification.go).
+//
+// NOTE (S4-11 -> S4-12 handoff): validate.py additionally requires that
+// when a decision's state is no_usage_detected, its
+// basedOn.coverageSummary.scanStatus field equals "complete" exactly —
+// coverageSummary lives only in decision-results.schema.json (it is NOT
+// part of usage-graph.json), and scanStatus is optional in that schema, so
+// a missing value fails validate.py even though it satisfies the schema.
+// DetermineState does not build coverageSummary; whatever assembles the
+// final decision JSON (S4-12+) MUST set scanStatus to "complete" exactly
+// when Verdict.State == StateNoUsageDetected, or the output will fail
+// validate.py despite State being correct.
 type Verdict struct {
 	State   State
 	Reasons []string
