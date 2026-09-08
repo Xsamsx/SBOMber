@@ -106,8 +106,8 @@ func parsePackageLockJSON(content []byte) (deps.Summary, error) {
 			if path == "" {
 				continue
 			}
-			name := strings.TrimPrefix(path, "node_modules/")
-			if strings.Contains(name, "node_modules/") {
+			name := packageLockPackageName(path)
+			if name == "" {
 				continue
 			}
 
@@ -139,6 +139,20 @@ func parsePackageLockJSON(content []byte) (deps.Summary, error) {
 	}
 
 	return summary, nil
+}
+
+func packageLockPackageName(path string) string {
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return ""
+	}
+	if strings.HasPrefix(path, "node_modules/") {
+		path = strings.TrimPrefix(path, "node_modules/")
+	}
+	if idx := strings.LastIndex(path, "/node_modules/"); idx >= 0 {
+		return path[idx+len("/node_modules/"):]
+	}
+	return path
 }
 
 func parseRequirementsTxt(content []byte) (deps.Summary, error) {

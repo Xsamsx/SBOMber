@@ -34,7 +34,7 @@ import (
 	"github.com/Xsamsx/SBOMber/internal/vulnerability"
 )
 
-const version = "0.1.0"
+const version = "0.1.1"
 
 const (
 	colorReset = "\033[0m"
@@ -46,6 +46,15 @@ const (
 	formatSPDX      = "spdx"
 	formatBoth      = "both"
 )
+
+var colorEnabled = true
+
+func withColor(prefix, text string) string {
+	if !colorEnabled {
+		return text
+	}
+	return prefix + text + colorReset
+}
 
 // Main executes the CLI and returns the exit code.
 func Main(args []string, stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
@@ -86,9 +95,18 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	fs.SetOutput(stderr)
 	format := fs.String("format", formatCycloneDX, "export format: cyclonedx, spdx, or both")
 	includeVulnerabilities := fs.Bool("include-vulnerabilities", false, "scan for vulnerabilities using Grype")
+	failOnVuln := fs.Bool("fail-on-vuln", false, "exit non-zero when vulnerabilities are found (requires --include-vulnerabilities)")
+	noColor := fs.Bool("no-color", false, "disable ANSI color output")
 
 	if err := fs.Parse(args); err != nil {
-		return 1
+		return 2
+	}
+	if *noColor {
+		colorEnabled = false
+	}
+	if *failOnVuln && !*includeVulnerabilities {
+		_, _ = fmt.Fprintf(stderr, "error: --fail-on-vuln requires --include-vulnerabilities\n")
+		return 2
 	}
 
 	root := "."
@@ -99,13 +117,18 @@ func runScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	absoluteRoot, err := resolveScanRoot(root)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "resolve path: %v\n", err)
-		return 1
+		return 2
+	}
+
+	if *includeVulnerabilities && !vulnerability.IsGrypeAvailable() {
+		_, _ = fmt.Fprintf(stderr, "error: vulnerability scanning requires Grype, but it is not installed or not on PATH\n")
+		return 2
 	}
 
 	selectedFormat, err := normalizeExportFormat(*format)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "invalid format: %v\n", err)
-		return 1
+		return 2
 	}
 
 	repos, err := discovery.FindGitRepositories(absoluteRoot)
@@ -164,10 +187,19 @@ func runGitHubScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	fs.SetOutput(stderr)
 	includeHealth := fs.Bool("health", false, "include supply chain health metrics")
 	includeVulns := fs.Bool("include-vulnerabilities", false, "scan for vulnerabilities using Grype")
+	failOnVuln := fs.Bool("fail-on-vuln", false, "exit non-zero when vulnerabilities are found (requires --include-vulnerabilities)")
+	noColor := fs.Bool("no-color", false, "disable ANSI color output")
 	format := fs.String("format", formatCycloneDX, "export format: cyclonedx, spdx, or both")
 
 	if err := fs.Parse(args); err != nil {
-		return 1
+		return 2
+	}
+	if *noColor {
+		colorEnabled = false
+	}
+	if *failOnVuln && !*includeVulns {
+		_, _ = fmt.Fprintf(stderr, "error: --fail-on-vuln requires --include-vulnerabilities\n")
+		return 2
 	}
 
 	if fs.NArg() == 0 {
@@ -177,7 +209,7 @@ func runGitHubScan(args []string, stdout io.Writer, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(stderr, "  sbomber github --health https://github.com/lodash/lodash\n")
 		_, _ = fmt.Fprintf(stderr, "  sbomber github --include-vulnerabilities https://github.com/org/repo\n")
 		_, _ = fmt.Fprintf(stderr, "  sbomber github https://github.com/org/repo1 https://github.com/org/repo2\n")
-		return 1
+		return 2
 	}
 
 	token := os.Getenv("GITHUB_TOKEN")
@@ -191,10 +223,14 @@ func runGitHubScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	selectedFormat, err := normalizeExportFormat(*format)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "invalid format: %v\n", err)
-		return 1
+		return 2
 	}
 
 	if *includeVulns {
+		if !vulnerability.IsGrypeAvailable() {
+			_, _ = fmt.Fprintf(stderr, "error: vulnerability scanning requires Grype, but it is not installed or not on PATH\n")
+			return 2
+		}
 		if vulnerability.IsGrypeAvailable() {
 			_, _ = fmt.Fprintf(stdout, "Vulnerability scanning: enabled (Grype)\n")
 		} else {
@@ -705,7 +741,7 @@ func runVerify(args []string, stdout io.Writer, stderr io.Writer) int {
 	outputJSON := fs.Bool("json", false, "output results as JSON")
 
 	if err := fs.Parse(args); err != nil {
-		return 1
+		return 2
 	}
 
 	if fs.NArg() < 2 {
@@ -721,7 +757,7 @@ func runVerify(args []string, stdout io.Writer, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(stderr, "  - https://github.com/CycloneDX/bom-examples\n")
 		_, _ = fmt.Fprintf(stderr, "  - https://github.com/sbomify/sbom-benchmarks\n")
 		_, _ = fmt.Fprintf(stderr, "  - https://github.com/spdx/spdx-examples\n")
-		return 1
+		return 2
 	}
 
 	groundTruthPath := fs.Arg(0)
@@ -785,7 +821,7 @@ func runDiff(args []string, stdout io.Writer, stderr io.Writer) int {
 	fs.SetOutput(stderr)
 
 	if err := fs.Parse(args); err != nil {
-		return 1
+		return 2
 	}
 
 	if fs.NArg() < 2 {
@@ -793,7 +829,7 @@ func runDiff(args []string, stdout io.Writer, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(stderr, "\nExamples:\n")
 		_, _ = fmt.Fprintf(stderr, "  sbomber diff old.cdx.xml new.cdx.xml\n")
 		_, _ = fmt.Fprintf(stderr, "  sbomber diff v1.0.cdx.json v1.1.cdx.json\n")
-		return 1
+		return 2
 	}
 
 	result, err := diff.DiffFiles(fs.Arg(0), fs.Arg(1))
@@ -837,11 +873,20 @@ func runGitLabScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	fs.SetOutput(stderr)
 	includeHealth := fs.Bool("health", false, "include supply chain health metrics")
 	includeVulns := fs.Bool("include-vulnerabilities", false, "scan for vulnerabilities using Grype")
+	failOnVuln := fs.Bool("fail-on-vuln", false, "exit non-zero when vulnerabilities are found (requires --include-vulnerabilities)")
+	noColor := fs.Bool("no-color", false, "disable ANSI color output")
 	format := fs.String("format", formatCycloneDX, "export format: cyclonedx, cyclonedx-json, spdx, or both")
 	instanceURL := fs.String("instance", "", "GitLab instance URL (default: https://gitlab.com)")
 
 	if err := fs.Parse(args); err != nil {
-		return 1
+		return 2
+	}
+	if *noColor {
+		colorEnabled = false
+	}
+	if *failOnVuln && !*includeVulns {
+		_, _ = fmt.Fprintf(stderr, "error: --fail-on-vuln requires --include-vulnerabilities\n")
+		return 2
 	}
 
 	if fs.NArg() == 0 {
@@ -850,7 +895,7 @@ func runGitLabScan(args []string, stdout io.Writer, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(stderr, "  sbomber gitlab https://gitlab.com/namespace/project\n")
 		_, _ = fmt.Fprintf(stderr, "  sbomber gitlab --health https://gitlab.com/org/repo\n")
 		_, _ = fmt.Fprintf(stderr, "  sbomber gitlab --instance https://gitlab.company.com https://gitlab.company.com/org/repo\n")
-		return 1
+		return 2
 	}
 
 	token := os.Getenv("GITLAB_TOKEN")
@@ -863,7 +908,7 @@ func runGitLabScan(args []string, stdout io.Writer, stderr io.Writer) int {
 	selectedFormat, err := normalizeExportFormat(*format)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "invalid format: %v\n", err)
-		return 1
+		return 2
 	}
 
 	if *includeVulns && !vulnerability.IsGrypeAvailable() {
@@ -1076,6 +1121,9 @@ func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
 					fmt.Print("\033[H\033[2J")
 					fmt.Fprint(stdout, "Goodbye!\n")
 					return 0
+				} else {
+					// Increment interactive scan counter (UI gamification)
+					incrementScanCount()
 				}
 			case "github":
 				// Show scanning message
@@ -1127,6 +1175,9 @@ func runInteractive(stdin io.Reader, stdout io.Writer, stderr io.Writer) int {
 					fmt.Print("\033[H\033[2J")
 					fmt.Fprint(stdout, "Goodbye!\n")
 					return 0
+				} else {
+					// Increment interactive scan counter (UI gamification)
+					incrementScanCount()
 				}
 			case "version":
 				if quit := showResultsScreen(fmt.Sprintf("SBOMber %s", version), ""); quit {
@@ -1385,6 +1436,9 @@ func buildRepoDependencySummary(repoPath string, detection ecosystem.Detection) 
 		if enriched, err := npm.EnrichFromYarnLock(repoPath, npmSummary); err == nil {
 			npmSummary = enriched
 		}
+		if enriched, err := npm.EnrichFromPackageLock(repoPath, npmSummary); err == nil {
+			npmSummary = enriched
+		}
 
 		summary.Direct = append(summary.Direct, npmSummary.Direct...)
 		summary.Transitive = append(summary.Transitive, npmSummary.Transitive...)
@@ -1536,9 +1590,9 @@ func printUsage(w io.Writer) {
 
 Usage:
   sbomber
-  sbomber scan [path] [--format FORMAT] [--include-vulnerabilities]
-  sbomber github [--health] [--include-vulnerabilities] [--format FORMAT] <repo-url>...
-  sbomber gitlab [--health] [--include-vulnerabilities] [--format FORMAT] [--instance URL] <repo-url>...
+  sbomber scan [path] [--format FORMAT] [--include-vulnerabilities] [--fail-on-vuln] [--no-color]
+  sbomber github [--health] [--include-vulnerabilities] [--fail-on-vuln] [--no-color] [--format FORMAT] <repo-url>...
+  sbomber gitlab [--health] [--include-vulnerabilities] [--fail-on-vuln] [--no-color] [--format FORMAT] [--instance URL] <repo-url>...
   sbomber trace <path> [package-name] [flags]
   sbomber verify <ground-truth-sbom> <generated-sbom> [--json]
   sbomber diff <old-sbom> <new-sbom>
@@ -1547,6 +1601,8 @@ Usage:
 Scan Flags:
   --format cyclonedx|cyclonedx-json|spdx|both   Export format (default: cyclonedx)
   --include-vulnerabilities                      Enable vulnerability scanning with Grype
+  --fail-on-vuln                                 Exit non-zero when vulnerabilities are found
+  --no-color                                     Disable ANSI color output
   --health                                       Supply chain health metrics (github/gitlab)
   --instance <url>                               GitLab instance URL (default: https://gitlab.com)
 

@@ -492,9 +492,78 @@ func renderBanner() string {
   ___) | |_) | |_| | |  | | |_) |  __/ |
  |____/|____/ \___/|_|  |_|____/ \___|_|`
 
+	// Show small gamification state: scans completed and badge
+	st := loadUIState()
+	scansText := fmt.Sprintf("Scans completed: %d", st.Scans)
+	badge := badgeForScans(st.Scans)
+
 	return bannerStyle.Render(banner) + "\n" +
 		lipgloss.NewStyle().MarginLeft(2).Foreground(lipgloss.Color("#666666")).Render("  v"+version) + "\n\n" +
-		lipgloss.NewStyle().MarginLeft(2).Foreground(lipgloss.Color("#888888")).Render("  A lightweight CLI for scanning local repositories and generating SBOMs.") + "\n\n"
+		lipgloss.NewStyle().MarginLeft(2).Foreground(lipgloss.Color("#888888")).Render("  A lightweight CLI for scanning local repositories and generating SBOMs.") + "\n\n" +
+		lipgloss.NewStyle().MarginLeft(2).Foreground(lipgloss.Color("39")).Bold(true).Render("  "+badge+" ") + lipgloss.NewStyle().MarginLeft(0).Foreground(lipgloss.Color("245")).Render(" "+scansText) + "\n\n"
+}
+
+// uiState holds persistent interactive UI metadata
+type uiState struct {
+	Scans    int    `json:"scans"`
+	LastScan string `json:"last_scan,omitempty"`
+}
+
+func stateFilePath() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	dir := filepath.Join(home, ".sbomber")
+	_ = os.MkdirAll(dir, 0755)
+	return filepath.Join(dir, "state.json")
+}
+
+func loadUIState() uiState {
+	path := stateFilePath()
+	if path == "" {
+		return uiState{}
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return uiState{}
+	}
+	var s uiState
+	if err := json.Unmarshal(data, &s); err != nil {
+		return uiState{}
+	}
+	return s
+}
+
+func saveUIState(s uiState) {
+	path := stateFilePath()
+	if path == "" {
+		return
+	}
+	data, _ := json.MarshalIndent(s, "", "  ")
+	_ = os.WriteFile(path, data, 0644)
+}
+
+func incrementScanCount() {
+	s := loadUIState()
+	s.Scans++
+	s.LastScan = time.Now().Format(time.RFC3339)
+	saveUIState(s)
+}
+
+func badgeForScans(n int) string {
+	switch {
+	case n >= 100:
+		return "🏆 Legend"
+	case n >= 50:
+		return "🥇 Veteran"
+	case n >= 10:
+		return "🎖️ Explorer"
+	case n >= 1:
+		return "✨ Rookie"
+	default:
+		return "🌱 Newbie"
+	}
 }
 
 func (m model) renderMenu() string {
